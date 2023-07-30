@@ -151,6 +151,10 @@ enum SubCommand {
     Remove {
         name: Option<String>,
     },
+    Rename {
+        name: Option<String>,
+        new_name: Option<String>,
+    }
 }
 
 #[derive(ValueEnum, Clone, Serialize, Deserialize)]
@@ -230,6 +234,7 @@ fn main() -> Result<()> {
                 println!("{}: {}", name, habit.name);
             }
         }
+        SubCommand::Rename { name, new_name } => todo!(),
     }
 
     let state_file = File::create(state_path).context("failed to create state file")?;

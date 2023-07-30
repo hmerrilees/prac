@@ -68,6 +68,7 @@ Task recurrence features in existing apps (or in those of which I am aware) do n
 -- hot-streaks, completions, completion logs
 -- complete manifesto
 -- Grace period to tune for schedule drift
+-- list display needs to be more informative
 
 ## delayed abstractions
 -- better timing implementation
@@ -81,6 +82,8 @@ Task recurrence features in existing apps (or in those of which I am aware) do n
 -- would be a little funny to do live progress bars
 -- One-off tasks 
 -- git vcs
+-- Subtasks? other clocks? subclocks seems like a better idea. I think it's still a bad idea though. If you want a weekly task, but want to work on it every day, just set the shorter clock and make sure you finish things.
+-- should probably switch to a folder + index? loading + saving the whole thing seems dangerous.
 
 
 ## Horrible Ideas
