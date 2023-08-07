@@ -14,6 +14,8 @@ use std::{
     time::{Duration, SystemTime},
 };
 
+// TODO get smart about notifications
+
 use anyhow::{bail, Context, Result};
 
 fn long_edit(content: Option<String>) -> Result<String> {
@@ -57,6 +59,7 @@ impl Habit {
     fn new(name: String, body: String, period: Duration) -> Self {
         let created = SystemTime::now();
         let logged = created.clone();
+        // TODO heading, or at least heading logic (take first line of body), yeah prob just an impl
 
         Self {
             created,
@@ -65,6 +68,35 @@ impl Habit {
             name,
             body,
         }
+    }
+
+    fn bar(&self, width: usize) -> Result<String> {
+        // TODO, make second bar view that is a timeline i.e. earlist |         █████  ¦                       | latest
+        // maybe                                                      |      ██████████¦███                    | latest
+        //                                                            |          ██████¦███████                | latest
+        let grace_period = 1.1;
+        let now = SystemTime::now();
+
+        let elapsed = now.duration_since(self.logged)?;
+        let fraction = elapsed.as_secs_f64() / self.period.as_secs_f64();
+
+        let start = " ";
+        let end_message = format!("");
+        let bar_width = width - start.len() - end_message.len();
+
+        let filled = ((fraction * bar_width as f64 / grace_period) as usize).min(bar_width);
+
+        let empty = (bar_width - filled) as usize;
+
+        let bar = format!(
+            "{}{}{}{}",
+            start,
+            "\u{025AC}".repeat(filled),
+            " ".repeat(empty),
+            end_message
+        );
+
+        Ok(bar)
     }
 }
 
@@ -154,7 +186,8 @@ enum SubCommand {
     Rename {
         name: Option<String>,
         new_name: Option<String>,
-    }
+    },
+    Reset,
 }
 
 #[derive(ValueEnum, Clone, Serialize, Deserialize)]
@@ -182,7 +215,6 @@ fn parse_time(duration: u64, unit: Unit) -> Duration {
 fn main() -> Result<()> {
     let home = dirs::home_dir().context("could not find home directory")?;
     let default_path = home.join(".todoom");
-    dbg!(&default_path);
     let state_path: PathBuf = var("TODOOM_PATH")
         .map(PathBuf::from)
         .unwrap_or(default_path)
@@ -230,11 +262,25 @@ fn main() -> Result<()> {
             habit.remove();
         }
         SubCommand::List => {
+            let max_name_len = state.todo.keys().map(|name| name.len()).max().unwrap_or(0);
+            let max_name_len = max_name_len.max(30);
+            let term_width = termsize::get().context("failed to obtain termsize")?.cols;
+            let bar_width = term_width as usize - max_name_len - 1;
+
+            println!("");
             for (name, habit) in state.todo.iter() {
-                println!("{}: {}", name, habit.name);
+                let mut n = name.clone(); // There has to be a better way?
+                n.truncate(max_name_len);
+                println!(" {:>max_name_len$}{}", name, habit.bar(bar_width)?);
             }
+            println!("");
         }
         SubCommand::Rename { name, new_name } => todo!(),
+        SubCommand::Reset =>{
+            for habit in state.todo.values_mut() {
+                habit.logged = SystemTime::now();
+            }
+        } 
     }
 
     let state_file = File::create(state_path).context("failed to create state file")?;
