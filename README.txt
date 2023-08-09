@@ -79,16 +79,20 @@ Task recurrence features in existing apps (or in those of which I am aware) do n
 -- people are reactive.
 
 
-## mvp 
--- "doom screen" progress/health bar...
 
 ## upcoming features
+-- *do <x> times every* <period>
 -- hot-streaks, completions, completion logs
--- complete manifesto
--- Grace period to tune for schedule drift
+	-- collect data (even if it isn't displayed)
+-- Grace period to tune for schedule drift (partially implemented in display, not really what i'm going for)
+-- Time off
 -- list display needs to be more informative
+-- edit period, (better interface)
+-- complete manifesto
+-- switch to better fzf
 
-## delayed abstractions LOG UX THOUGHTS
+
+## delayed abstractions 
 -- better timing implementation
 -- grace period for tasks to preven
 -- daily logging integration (I struggle when my todolist and my notes and my journal are all separate, especially when attempting a daily journal.)
@@ -102,7 +106,6 @@ Task recurrence features in existing apps (or in those of which I am aware) do n
 -- would be a little funny to do live progress bars
 -- One-off tasks 
 -- git vcs
--- Subtasks? other clocks? subclocks seems like a better idea. I think it's still a bad idea though. If you want a weekly task, but want to work on it every day, just set the shorter clock and make sure you finish things.
 -- should probably switch to a folder + index? loading + saving the whole thing seems dangerous.
 -- responsive periods, if you miss regularly, maybe time should be extended
 -- how do we re-rail
