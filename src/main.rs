@@ -58,7 +58,7 @@ struct Habit {
 impl Habit {
     fn new(name: String, body: String, period: Duration) -> Self {
         let created = SystemTime::now();
-        let logged = created.clone();
+        let logged = created;
         // TODO heading, or at least heading logic (take first line of body), yeah prob just an impl
 
         Self {
@@ -81,12 +81,12 @@ impl Habit {
         let fraction = elapsed.as_secs_f64() / self.period.as_secs_f64();
 
         let start = " ";
-        let end_message = format!("");
+        let end_message = String::new(); // Placeholder in case you want something here
         let bar_width = width - start.len() - end_message.len();
 
         let filled = ((fraction * bar_width as f64 / grace_period) as usize).min(bar_width);
 
-        let empty = (bar_width - filled) as usize;
+        let empty = bar_width - filled;
 
         let bar = format!(
             "{}{}{}{}",
@@ -122,7 +122,7 @@ impl State {
         let name = name
             .context("name not provided")
             .map(String::from)
-            .or_else(|e| {
+            .or_else(|_e| {
                 let options = SkimOptionsBuilder::default()
                     .height(Some("50%"))
                     .build()
@@ -132,8 +132,8 @@ impl State {
                 // `SkimItem` was implemented for `AsRef<str>` by default
                 let items = SkimItemReader::default().of_bufread(Cursor::new(
                     self.todo
-                        .iter()
-                        .map(|(k, _v)| format!("{}", k))
+                        .keys()
+                        .map(|k| format!("{}", k))
                         .collect::<Vec<_>>()
                         .join("\n"),
                 ));
@@ -172,12 +172,19 @@ enum SubCommand {
         #[arg(value_enum)]
         unit: Unit,
     },
+    Track {
+        name: Option<String>,
+        hours: Option<u64>,
+    },
     Log {
         name: Option<String>,
-    },
-    Edit {
-        name: Option<String>,
         // TODO add time adjustment option
+    },
+    EditPeriod {
+        name: Option<String>,
+        period: Option<u64>,
+        #[arg(value_enum)]
+        unit: Option<Unit>,
     },
     List,
     Remove {
@@ -214,17 +221,16 @@ fn parse_time(duration: u64, unit: Unit) -> Duration {
 
 fn main() -> Result<()> {
     let home = dirs::home_dir().context("could not find home directory")?;
-    let default_path = home.join(".todoom");
+    let default_path = home.join(".todoom"); // TODO to userdata home
     let state_path: PathBuf = var("TODOOM_PATH")
         .map(PathBuf::from)
-        .unwrap_or(default_path)
-        .into();
+        .unwrap_or(default_path);
 
     // return file if exists, if open fails, tansform to create new file.
 
-    // TODO, probably a better way to do this with OpenOptions
     // I did this way because open can error on more than just file non-existence
     // try_exists returns Ok(False) if confirmed not to exist, we need to handle.
+    // ... bad default semantics, maybe use OpenOptions instead
     let mut state = if state_path.try_exists().is_ok_and(|b| b) {
         let state_file =
             File::open(&state_path).context("attempted to open existing path, but found error")?;
@@ -246,12 +252,12 @@ fn main() -> Result<()> {
             let new = Habit::new(name, body, parse_time(period, unit));
             state.todo.insert(new.name.clone(), new);
         }
-        SubCommand::Log { name } => {
+        SubCommand::Track { name, hours: _ } => {
             let mut find = state.find(name.as_deref())?;
             let habit = find.get_mut();
             habit.logged = SystemTime::now();
         }
-        SubCommand::Edit { name } => {
+        SubCommand::Log { name } => {
             let mut find = state.find(name.as_deref())?;
             let habit = find.get_mut();
             let body = long_edit(Some(habit.body.clone()))?;
@@ -267,20 +273,29 @@ fn main() -> Result<()> {
             let term_width = termsize::get().context("failed to obtain termsize")?.cols;
             let bar_width = term_width as usize - max_name_len - 1;
 
-            println!("");
+            println!();
             for (name, habit) in state.todo.iter() {
                 let mut n = name.clone(); // There has to be a better way?
                 n.truncate(max_name_len);
                 println!(" {:>max_name_len$}{}", name, habit.bar(bar_width)?);
             }
-            println!("");
+            println!();
         }
-        SubCommand::Rename { name, new_name } => todo!(),
-        SubCommand::Reset =>{
+        SubCommand::Rename {
+            name: _,
+            new_name: _,
+        } => todo!(),
+        SubCommand::Reset => {
             for habit in state.todo.values_mut() {
                 habit.logged = SystemTime::now();
             }
-        } 
+        }
+        SubCommand::EditPeriod { name, period, unit } => {
+            let mut find = state.find(name.as_deref())?;
+            let habit = find.get_mut();
+            let period = parse_time(period.unwrap_or(0), unit.unwrap_or(Unit::Hours));
+            habit.period = period;
+        }
     }
 
     let state_file = File::create(state_path).context("failed to create state file")?;
