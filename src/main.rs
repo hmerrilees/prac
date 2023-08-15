@@ -44,19 +44,27 @@ fn long_edit(content: Option<String>) -> Result<String> {
 }
 
 #[derive(Serialize, Deserialize)]
-struct Habit {
-    created: SystemTime,
-    logged: SystemTime,
-    period: Duration,
-    name: String,
-    body: String,
+pub struct Practice {
+    pub created: SystemTime,
+    // last time logged
+    pub logged: SystemTime,
+    // how often you wish to repeat practice
+    pub period: Duration,
+    // unique id of practice, will be used for retrieval
+    pub name: String,
+    // take notes
+    pub body: String,
+    // TODO: make a smart design choice about how to store this
+    //     you're not going to log 3 weeks of a practice
+    // tracked time
+    pub cumulative: Duration,
 }
 
-// TODO maybe a Completion struct? then a body enum {Habit, Task} that contains Vec<Comepletion> for habit and raw
+// TODO maybe a Completion struct? then a body enum {practice, Task} that contains Vec<Comepletion> for practice and raw
 // Completion for task. Trying not to prematurely optimize.
 
-impl Habit {
-    fn new(name: String, body: String, period: Duration) -> Self {
+impl Practice {
+    pub fn new(name: String, body: String, period: Duration) -> Self {
         let created = SystemTime::now();
         let logged = created;
         // TODO heading, or at least heading logic (take first line of body), yeah prob just an impl
@@ -67,6 +75,7 @@ impl Habit {
             period,
             name,
             body,
+            cumulative: Duration::new(0, 0),
         }
     }
 
@@ -101,16 +110,16 @@ impl Habit {
 }
 
 #[derive(Parser)]
-struct Cli {
+pub struct Cli {
     #[command(subcommand)]
     command: SubCommand,
 }
 
-// TODO if you used a BTreeMap<timebaseduuid, Habit> you could solve a lot of problems
+// TODO if you used a BTreeMap<timebaseduuid, practice> you could solve a lot of problems
 type Key = String;
 #[derive(Serialize, Deserialize, Default)]
 struct State {
-    todo: BTreeMap<Key, Habit>,
+    todo: BTreeMap<Key, Practice>,
 }
 
 impl State {
@@ -118,7 +127,7 @@ impl State {
         Self::default()
     }
 
-    fn find(&mut self, name: Option<&str>) -> Result<btree_map::OccupiedEntry<Key, Habit>> {
+    fn find(&mut self, name: Option<&str>) -> Result<btree_map::OccupiedEntry<Key, Practice>> {
         let name = name
             .context("name not provided")
             .map(String::from)
@@ -156,7 +165,7 @@ impl State {
             .context("failure to obtain name")?;
 
         match self.todo.entry(name) {
-            btree_map::Entry::Vacant(_) => bail!("Item not found."),
+            btree_map::Entry::Vacant(_) => bail!("Practice not found."),
             btree_map::Entry::Occupied(o) => Ok(o),
         }
     }
@@ -164,6 +173,7 @@ impl State {
 
 #[derive(Subcommand)]
 enum SubCommand {
+    /// Add a new practice, specifying name, body(optional), and period.
     Add {
         name: String,
         #[arg(short, long)]
@@ -172,33 +182,36 @@ enum SubCommand {
         #[arg(value_enum)]
         unit: Unit,
     },
-    // Track a practice, specify name or select from list
+    /// Track a practice, specify name or select from list.
     Track {
         name: Option<String>,
-        hours: Option<u64>,
+        time: u64,
+        #[arg(value_enum)]
+        unit: Unit,
     },
-    // Edit log, specify name or select from list
+    /// Edit log, specify name or select from list.
     Log {
         name: Option<String>,
-        // TODO add time adjustment option
     },
-    // Edit period, specify name or select from list
+    /// Edit period, specify name or select from list.
     EditPeriod {
         name: Option<String>,
         period: Option<u64>,
         #[arg(value_enum)]
         unit: Option<Unit>,
     },
+    /// View list of practices.
     List,
-    // Remove routine, specify name or select from list
+    /// Remove practice, specify name or select from list.
     Remove {
         name: Option<String>,
     },
-    // Rename routine
+    /// Rename practice.
     Rename {
         name: String,
         new_name: String,
     },
+    // Reset progress bars. Equivalent to tracking all practices w/ zero time.
     Reset,
 }
 
@@ -254,23 +267,26 @@ fn main() -> Result<()> {
             unit,
         } => {
             let body = body.unwrap_or_else(|| long_edit(None).unwrap());
-            let new = Habit::new(name, body, parse_time(period, unit));
+            let new = Practice::new(name, body, parse_time(period, unit));
             state.todo.insert(new.name.clone(), new);
         }
-        SubCommand::Track { name, hours: _ } => {
+        SubCommand::Track { name, time, unit } => {
             let mut find = state.find(name.as_deref())?;
-            let habit = find.get_mut();
-            habit.logged = SystemTime::now();
+            let practice = find.get_mut();
+            practice.logged = SystemTime::now();
+
+            let duration = parse_time(time, unit);
+            practice.cumulative += duration;
         }
         SubCommand::Log { name } => {
             let mut find = state.find(name.as_deref())?;
-            let habit = find.get_mut();
-            let body = long_edit(Some(habit.body.clone()))?;
-            habit.body = body;
+            let practice = find.get_mut();
+            let body = long_edit(Some(practice.body.clone()))?;
+            practice.body = body;
         }
         SubCommand::Remove { name } => {
-            let habit = state.find(name.as_deref())?;
-            habit.remove();
+            let practice = state.find(name.as_deref())?;
+            practice.remove();
         }
         SubCommand::List => {
             let max_name_len = state.todo.keys().map(|name| name.len()).max().unwrap_or(0);
@@ -279,28 +295,28 @@ fn main() -> Result<()> {
             let bar_width = term_width as usize - max_name_len - 1;
 
             println!();
-            for (name, habit) in state.todo.iter() {
+            for (name, practice) in state.todo.iter() {
                 let mut n = name.clone(); // There has to be a better way?
                 n.truncate(max_name_len);
-                println!(" {:>max_name_len$}{}", name, habit.bar(bar_width)?);
+                println!(" {:>max_name_len$}{}", name, practice.bar(bar_width)?);
             }
             println!();
         }
         SubCommand::Rename { name, new_name } => {
-            let mut habit = state.todo.remove(&name).context("habit not found")?;
-            habit.name = new_name.clone();
-            state.todo.insert(new_name, habit);
+            let mut practice = state.todo.remove(&name).context("practice not found")?;
+            practice.name = new_name.clone();
+            state.todo.insert(new_name, practice);
         }
         SubCommand::Reset => {
-            for habit in state.todo.values_mut() {
-                habit.logged = SystemTime::now();
+            for practice in state.todo.values_mut() {
+                practice.logged = SystemTime::now();
             }
         }
         SubCommand::EditPeriod { name, period, unit } => {
             let mut find = state.find(name.as_deref())?;
-            let habit = find.get_mut();
+            let practice = find.get_mut();
             let period = parse_time(period.unwrap_or(0), unit.unwrap_or(Unit::Hours));
-            habit.period = period;
+            practice.period = period;
         }
     }
 
