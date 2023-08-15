@@ -172,14 +172,17 @@ enum SubCommand {
         #[arg(value_enum)]
         unit: Unit,
     },
+    // Track a practice, specify name or select from list
     Track {
         name: Option<String>,
         hours: Option<u64>,
     },
+    // Edit log, specify name or select from list
     Log {
         name: Option<String>,
         // TODO add time adjustment option
     },
+    // Edit period, specify name or select from list
     EditPeriod {
         name: Option<String>,
         period: Option<u64>,
@@ -187,12 +190,14 @@ enum SubCommand {
         unit: Option<Unit>,
     },
     List,
+    // Remove routine, specify name or select from list
     Remove {
         name: Option<String>,
     },
+    // Rename routine
     Rename {
-        name: Option<String>,
-        new_name: Option<String>,
+        name: String,
+        new_name: String,
     },
     Reset,
 }
@@ -221,8 +226,8 @@ fn parse_time(duration: u64, unit: Unit) -> Duration {
 
 fn main() -> Result<()> {
     let home = dirs::home_dir().context("could not find home directory")?;
-    let default_path = home.join(".todoom"); // TODO to userdata home
-    let state_path: PathBuf = var("TODOOM_PATH")
+    let default_path = home.join(".practice"); // TODO to userdata home
+    let state_path: PathBuf = var("PRACTICE_PATH")
         .map(PathBuf::from)
         .unwrap_or(default_path);
 
@@ -281,10 +286,11 @@ fn main() -> Result<()> {
             }
             println!();
         }
-        SubCommand::Rename {
-            name: _,
-            new_name: _,
-        } => todo!(),
+        SubCommand::Rename { name, new_name } => {
+            let mut habit = state.todo.remove(&name).context("habit not found")?;
+            habit.name = new_name.clone();
+            state.todo.insert(new_name, habit);
+        }
         SubCommand::Reset => {
             for habit in state.todo.values_mut() {
                 habit.logged = SystemTime::now();
