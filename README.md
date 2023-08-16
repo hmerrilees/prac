@@ -1,5 +1,5 @@
 # prac
-## a utility completing a feedback-cycle conducive to immersive practice in a busy world
+# a utility for a feedback-cycle conducive to immersive practice in a busy world
 
 ## Installation
 install rust, clone repo, then
