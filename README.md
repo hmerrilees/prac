@@ -53,7 +53,7 @@ The progress bars for each item display time elapsed since last participation as
 How you wish to systematize this is up to you, personally, I wouldn't even think about it.
 Just look at it when you get stuck and need something else to do.
 
-### What this isn't
+## What this isn't
 This is not a todo list, a calendar, pomodoro timer, a project manager, a scheduling app, or a habit tracker.
 
 Design decisions have been made on ideological grounds to intentionally maximize incompatibility with these types of apps.
