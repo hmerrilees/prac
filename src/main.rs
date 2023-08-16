@@ -14,11 +14,11 @@ use std::{
 
 use anyhow::{bail, Context, Result};
 
-mod utils;
-use utils::{long_edit, parse_time, TimeUnit};
+pub mod utils;
+use utils::TimeUnit;
 
 #[derive(Serialize, Deserialize)]
-struct Config {
+pub struct Config {
     grace_period: GracePeriod,
     // TODO, add version so that at least we have a chance of being backwards compatible
     // potential implementation for new fields: use options on import, and let-else w/
@@ -41,7 +41,7 @@ enum GracePeriod {
 
 // TODO, solve backwards compatibility issue, see Config
 #[derive(Serialize, Deserialize, Default)]
-struct State {
+pub struct State {
     routines: BTreeMap<String, Practice>,
     config: Config,
 }
@@ -77,35 +77,7 @@ impl Practice {
         }
     }
 
-    fn bar(&self, width: usize, grace_period: &GracePeriod) -> Result<String> {
-        let now = SystemTime::now();
-
-        let elapsed = now.duration_since(self.logged)?;
-        let fraction = elapsed.as_secs_f64() / self.period.as_secs_f64();
-
-        let start = " ";
-        let end_message = String::new(); // Placeholder in case you want something here
-        let bar_width = width - start.len() - end_message.len();
-
-        let period = match grace_period {
-            GracePeriod::Fixed(d) => (*d + self.period).as_secs_f64(),
-            GracePeriod::Fractional(f) => self.period.as_secs_f64() * f,
-        };
-
-        let filled = ((fraction * bar_width as f64 / period) as usize).min(bar_width);
-
-        let empty = bar_width - filled;
-
-        let bar = format!(
-            "{}{}{}{}",
-            start,
-            "\u{025AC}".repeat(filled),
-            " ".repeat(empty),
-            end_message
-        );
-
-        Ok(bar)
-    }
+    // TODO: find external crate for this
 }
 
 impl State {
@@ -152,6 +124,7 @@ impl State {
     }
 }
 
+/// The dead-simple practice-cultivating utility.
 #[derive(Parser)]
 pub struct Cli {
     #[command(subcommand)]
@@ -188,7 +161,14 @@ enum SubCommand {
         unit: Option<TimeUnit>,
     },
     /// View list of practices.
-    List,
+    List {
+        /// show cumulative hours tracked alongside practices
+        #[arg(short, long)]
+        cumulative: bool,
+        /// show period alongside practices
+        #[arg(short, long)]
+        period: bool,
+    },
     /// Remove practice, specify name or select from list.
     Remove {
         name: Option<String>,
@@ -231,8 +211,8 @@ fn main() -> Result<()> {
             period,
             unit,
         } => {
-            let body = body.unwrap_or_else(|| long_edit(None).unwrap());
-            let new = Practice::new(name, body, parse_time(period, unit));
+            let body = body.unwrap_or_else(|| utils::long_edit(None).unwrap());
+            let new = Practice::new(name, body, utils::parse_time(period, unit));
             state.routines.insert(new.name.clone(), new);
         }
         SubCommand::Track { name, time, unit } => {
@@ -240,20 +220,20 @@ fn main() -> Result<()> {
             let practice = find.get_mut();
             practice.logged = SystemTime::now();
 
-            let duration = parse_time(time, unit);
+            let duration = utils::parse_time(time, unit);
             practice.cumulative += duration;
         }
         SubCommand::Log { name } => {
             let mut find = state.find(name.as_deref())?;
             let practice = find.get_mut();
-            let body = long_edit(Some(practice.body.clone()))?;
+            let body = utils::long_edit(Some(practice.body.clone()))?;
             practice.body = body;
         }
         SubCommand::Remove { name } => {
             let practice = state.find(name.as_deref())?;
             practice.remove();
         }
-        SubCommand::List => {
+        SubCommand::List { cumulative, period } => {
             let max_name_len = state
                 .routines
                 .keys()
@@ -262,17 +242,50 @@ fn main() -> Result<()> {
                 .unwrap_or(0);
             let max_name_len = max_name_len.max(30);
             let term_width = termsize::get().context("failed to obtain termsize")?.cols;
-            let bar_width = term_width as usize - max_name_len - 1;
 
             println!();
+            let now = SystemTime::now();
             for (name, practice) in state.routines.iter() {
-                let mut n = name.clone(); // There has to be a better way?
-                n.truncate(max_name_len);
-                println!(
-                    " {:>max_name_len$}{}",
-                    name,
-                    practice.bar(bar_width, &state.config.grace_period)?
+                let mut truncated_name = name.clone();
+                truncated_name.truncate(max_name_len); // better way to do this?
+
+                let start_message = format!(" {:>max_name_len$} ", name);
+
+                let hours_cumulative = practice.cumulative.as_secs_f64() / 3600.0;
+                let hours_period = practice.period.as_secs_f64() / 3600.0;
+
+                let end_message = match (cumulative, period) {
+                    (true, true) => format!(
+                        " {:>4}h c  {:>4}h p ",
+                        hours_cumulative as u64, hours_period as u64
+                    ),
+                    (true, false) => format!(" {:>4}h cumulative ", hours_cumulative as u64),
+                    (false, true) => format!(" {:>4}h period ", hours_period as u64),
+                    (false, false) => String::new(),
+                };
+
+                let elapsed = now
+                    .duration_since(practice.logged)
+                    .context("last log is in future")?;
+
+                let grace_adjusted_period = match state.config.grace_period {
+                    GracePeriod::Fixed(d) => (d + practice.period).as_secs_f64(),
+                    GracePeriod::Fractional(f) => practice.period.as_secs_f64() * f,
+                };
+                let fraction = elapsed.as_secs_f64() / grace_adjusted_period;
+
+                let bar_width = (term_width as usize)
+                    .checked_sub(start_message.len() + end_message.len())
+                    .context("terminal too narrow")?;
+
+                let whole_bar = format!(
+                    "{}{}{}",
+                    start_message,
+                    utils::bar(bar_width, fraction),
+                    end_message
                 );
+
+                println!("{}", whole_bar);
             }
             println!();
         }
@@ -289,7 +302,7 @@ fn main() -> Result<()> {
         SubCommand::EditPeriod { name, period, unit } => {
             let mut find = state.find(name.as_deref())?;
             let practice = find.get_mut();
-            let period = parse_time(period.unwrap_or(0), unit.unwrap_or(TimeUnit::Hours));
+            let period = utils::parse_time(period.unwrap_or(0), unit.unwrap_or(TimeUnit::Hours));
             practice.period = period;
         }
     }
