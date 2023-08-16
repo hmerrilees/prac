@@ -1,5 +1,5 @@
-//! # a practice-cultivating utility (for overachieving procrastinators recovering from an
-//! unhealthy fixation on self-development)
+//! # a practice-cultivating utility 
+//! (for overachieving procrastinators recovering from an unhealthy fixation on self-development)
 //!
 //! ## What this isn't
 //! This is not a todo list, a calendar, pomodoro timer, a scheduling app, or a habit tracker.
@@ -22,7 +22,7 @@
 //! average period of ~90 minutes does not make possible reproduction of the effect by way of 
 //! a 90-minute alarm clock. While we cannot stay in flow forever, we can remain in the
 //! experience of time as we allow our natural stuckness to lead our transition to
-//! the next state of practice.
+//! the next state of practice. This is the motivating philosophy of `prac`.
 //!
 //! If you want, you can get started right now with `prac help`. If you want to see how I
 //! attempted to integrate the dream theory of flow state into, read on to the minifesto.
@@ -58,10 +58,10 @@
 //! provides a very gentle way prioritize those practices that have been recently neglected.
 //!
 //! Looks like this:
+//! ```bash
+//! prac list
 //! ```
-//! $ prac list
-//! ```
-//! ```
+//! ```text
 //! distributed systems programming ▬▬▬
 //!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
