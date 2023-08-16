@@ -21,27 +21,27 @@ pub(crate) enum TimeUnit {
     Years,
 }
 
-/// Conversion from scalar TimeUnits to Duration.
-pub(crate) fn parse_time(duration: u64, unit: TimeUnit) -> Duration {
-    Duration::from_secs(
-        duration
-            * match unit {
+impl TimeUnit {
+    pub(crate) fn to_duration(num: u64, unit: TimeUnit) -> Duration {
+        Duration::from_secs(
+            num * match unit {
                 TimeUnit::Hours => 60 * 60,
                 TimeUnit::Days => 60 * 60 * 24,
                 TimeUnit::Weeks => 60 * 60 * 24 * 7,
                 TimeUnit::Months => 60 * 60 * 24 * 30, // I'm terribly sorry
                 TimeUnit::Years => 60 * 60 * 24 * 365,
             },
-    )
+        )
+    }
 }
 
 /// Write content to file
 pub(crate) fn long_edit(content: Option<String>) -> Result<String> {
-    let editor = var("EDITOR").context("EDITOR environment variable not set")?;
+    let editor = var("EDITOR").context("EDITOR environment variable not found.")?;
 
     let mut file_path = temp_dir();
     file_path.push("editable");
-    let file = File::create(&file_path).context("Could not create file")?;
+    let file = File::create(&file_path).context("Could not create file.")?;
 
     if let Some(content) = content {
         BufWriter::new(file)

@@ -1,5 +1,5 @@
 [package]
-name = "practice"
+name = "prac"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,4 +13,3 @@ serde = { version = "1.0.178", features = ["derive"] }
 serde_json = "1.0.104"
 skim = "0.10.4"
 termsize = "0.1.6"
-uuid = { version = "1.4.1", features = ["v4", "fast-rng", "macro-diagnostics", "serde"] }
