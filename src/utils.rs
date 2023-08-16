@@ -13,7 +13,7 @@ use anyhow::{Context, Result};
 
 /// A unit of time.
 #[derive(ValueEnum, Clone, Serialize, Deserialize)]
-pub(crate) enum TimeUnit {
+pub(super) enum TimeUnit {
     Hours,
     Days,
     Weeks,
@@ -22,7 +22,7 @@ pub(crate) enum TimeUnit {
 }
 
 impl TimeUnit {
-    pub(crate) fn to_duration(num: u64, unit: TimeUnit) -> Duration {
+    pub(super) fn to_duration(num: u64, unit: TimeUnit) -> Duration {
         Duration::from_secs(
             num * match unit {
                 TimeUnit::Hours => 60 * 60,
@@ -36,7 +36,7 @@ impl TimeUnit {
 }
 
 /// Write content to file
-pub(crate) fn long_edit(content: Option<String>) -> Result<String> {
+pub(super) fn long_edit(content: Option<String>) -> Result<String> {
     let editor = var("EDITOR").context("EDITOR environment variable not found.")?;
 
     let mut file_path = temp_dir();
@@ -62,7 +62,7 @@ pub(crate) fn long_edit(content: Option<String>) -> Result<String> {
 }
 
 /// generate a bar for a practice
-pub(crate) fn bar(bar_width: usize, mut fraction: f64) -> String {
+pub(super) fn bar(bar_width: usize, mut fraction: f64) -> String {
     fraction = fraction.max(0.0).min(1.0);
     //.with_context(|| "fraction must be between 0 and 1")?;
     let filled = (fraction * bar_width as f64) as usize;

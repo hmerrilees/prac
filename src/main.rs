@@ -1,5 +1,32 @@
-//! # a practice-cultivating utility 
+ #![warn(
+     clippy::all,
+     clippy::restriction,
+     clippy::pedantic,
+     clippy::nursery,
+     clippy::cargo,
+ )]
+//! # the dead-simple anti-scheduling practice-cultivating utility 
 //! (for overachieving procrastinators recovering from an unhealthy fixation on self-development)
+//!
+//! ## UI demo
+//! ```bash
+//! prac list
+//! ```
+//! ```text
+//! distributed systems programming ▬▬▬
+//!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                     kierkegaard ▬▬▬▬▬▬▬
+//!                           steno ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                     weekly repo ▬▬▬
+//!
+//! (tip: use `prac list --cumulative` to see cumulative hours tracked, are we 10000 yet?)
+//! ```
+//! > Looks like I haven't done steno in a while... when I get stuck, I'll switch to that.
+//!
+//!
+//!
+//! In `prac` the clock has no control and appears only as purely geometric information to augment the human weakness that is ascertaining one's position in the passage of time.
 //!
 //! ## What this isn't
 //! This is not a todo list, a calendar, pomodoro timer, a scheduling app, or a habit tracker.
@@ -57,24 +84,9 @@
 //! it's been since you last practiced as a fraction of how frequently you wish to practice. This
 //! provides a very gentle way prioritize those practices that have been recently neglected.
 //!
-//! Looks like this:
-//! ```bash
-//! prac list
-//! ```
-//! ```text
-//! distributed systems programming ▬▬▬
-//!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                     kierkegaard ▬▬▬▬▬▬▬
-//!                           steno ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                     weekly repo ▬▬▬
-//!
-//! (tip: use `prac list --cumulative` to see cumulative hours logged, are we 10000 yet?)
-//! ```
-//!
-//! In `prac` the clock has no control and appears only as purely geometric information to augment the human weakness that is ascertaining one's position in the passage of time.
-//!
 //! For those who struggle with work-life balance, these tasks can include things like rest, play, socializing, eating, outdoor time, family time, and other practices of self-care.
+//!
+//!
 //!
 //! I firmly believe that time and quality of practice account for the bulk of competence, and so
 //! I've implemented only two tracking features, `proc trac` for a bare total of time, and `prac log` for plain text goal-setting and reflection.
@@ -85,11 +97,11 @@
 //! Again, it's not a routine app, but I think accidentally it's the best routine app I've ever used. I use clock periods instead of calendar periods to eliminate the incentive to start at the very beginning of the block (i.e. scheduling) and so that "overachievers" wouldn't be waiting so long for the next calendar period that they forget the system, but this also has the side effect that routines tracked earlier the previous day will now have a stronger signal to do it earlier again the next and vice versa. With a 2hr default grace period, there is flexibility (++resilience: you don't give up on your system the moment things don't go to plan) at the same time as it encourages you generally to keep a pattern of habits that work for you at the same time as it encourages you generally to keep to a pattern of habits that work for you.
 //!
 //! ### A rant on self-scheduling
-//! Ideologically, I just despise self-scheduling. Spontaneity is in all things beautiful.
-//! Forgetfulness is just spontaneity in the negative, no less an exercise of freedom. 
+//! Ideologically, I despise self-scheduling. Spontaneity is in all things beautiful.
+//! Forgetfulness is spontaneity in the negative, no less an exercise of freedom. 
 //! Without scheduling we would have much less to forget, and for that I respect scheduling. 
 //! However, I have zero respect for self-scheduling. "Sorry, I can't [be a normal fun person]," says the self-scheduler, "I have to do this thing that nobody told me I had to and that I don't even want to do myself." 
-//! Neither is there spontaneous beauty in forgetting self-orders--you are just back where you started except now also a failure. 
+//! Neither is there spontaneous beauty in forgetting self-orders--you are back where you started except now also a failure. 
 //! When I "succeed" in perfectly following my elaborate self-scheduling, it means that I accomplished something so mundane that I had already totally understood it before I even began. 
 //!
 //! ### Inspiration
@@ -99,13 +111,12 @@
 //! App](https://www.squibler.io/dangerous-writing-prompt-app/write?limit=5&type=minutes), and I
 //! intentionally hadn't handled progress bar overflow, resulting in a crash and arbitrary data loss. 
 //!
-//! ## Can I have x feature to track something that I could just as easily track in the plain text
-//! notes?
+//! ## Can I have x feature to track something that I could just as easily track in the plain text notes?
 //! no.
 //!
 //! ## State management warning
 //!
-//! I would HIGHLY recommend backing up your state file.
+//! I would HIGHLY recommend backing up your state file (@[[state location](#state-location)])
 //! State management is so far from stabilized, backwards compatibility is in no way guaranteed.
 //! As far as I'm concerned, your data may be lost at any time.
 
@@ -125,12 +136,12 @@ use std::{
 
 use anyhow::{bail, Context, Result};
 
-pub mod utils;
+mod utils;
 use utils::TimeUnit;
 
 // TODO, config edit command
 #[derive(Serialize, Deserialize)]
-pub struct Config {
+struct Config {
     grace_period: GracePeriod,
     version: String,
     // potential versioning compat implementation for new fields: use options on import, and let-else w/
@@ -154,29 +165,29 @@ enum GracePeriod {
 
 // TODO, solve backwards compatibility issue, see Config
 #[derive(Serialize, Deserialize, Default)]
-pub struct State {
+struct State {
     routines: BTreeMap<String, Practice>,
     config: Config,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Practice {
-    pub created: SystemTime,
+struct Practice {
+   created: SystemTime,
     // last time logged
-    pub logged: SystemTime,
+   logged: SystemTime,
     // how often you wish to repeat practice
-    pub period: Duration,
+   period: Duration,
     // unique id of practice, will be used for retrieval
-    pub name: String,
+   name: String,
     // take notes
-    pub notes: String,
-    pub cumulative: Duration,
+   notes: String,
+   cumulative: Duration,
     // TODO maybe a Completion struct? then a body enum {practice, Task} that contains Vec<Comepletion> for practice and raw
     // Completion for task. Trying not to prematurely optimize.
 }
 
 impl Practice {
-    pub fn new(name: String, notes: String, period: Duration) -> Self {
+    fn new(name: String, notes: String, period: Duration) -> Self {
         let created = SystemTime::now();
         let logged = created;
 
@@ -239,16 +250,16 @@ impl State {
 
 /// Prac: a dead-simple practice-cultivating utility.
 #[derive(Parser)]
-pub struct Cli {
+struct Cli {
     #[command(subcommand)]
     command: SubCommand,
 }
 
+
 // TODO: config edit command
 #[derive(Subcommand)]
 enum SubCommand {
-    /// List practices, with a progress bar showing time through period since last practice.
-    /// For options, see subcommand --help
+    /// List practices, with a progress bar showing time elapsed through period since last practice. See `help list` for options.
     List {
         /// Show cumulative hours tracked alongside practices.
         #[arg(short, long)]
@@ -257,7 +268,7 @@ enum SubCommand {
         #[arg(short, long)]
         period: bool,
     },
-    /// Add a new practice.
+    /// Add a new practice. See `help add` for usage.
     Add {
         /// A (unique) name for the practice.
         name: String,
@@ -269,7 +280,7 @@ enum SubCommand {
         #[arg(value_enum)]
         time_unit: TimeUnit,
     },
-    /// Mark a practice completion, logging time.
+    /// Mark a practice completion, tracking time spent. See `help track` for usage.
     Track {
         /// Specify, or leave blank to fuzzy search.
         name: Option<String>,
@@ -310,8 +321,10 @@ enum SubCommand {
     Reset,
     /// Show state file location.
     ///
-    /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, or $XDG_DATA_HOME/prac/prac.json
-    /// or ~/.prac.json if none of previous are set.
+    /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, [dirs::data_dir]/prac/prac.json 
+    /// or [dirs::home_dir]/.prac.json, searched in that order.
+    ///
+    /// It's a good idea to vcs your state file.
     StateLocation,
 }
 
@@ -331,7 +344,6 @@ fn get_state_path() -> Result<PathBuf> {
         let path = default_dir.join("prac.json");
         Ok(path)
     } else {
-        println!("Could not find XDG_DATA_HOME, PRACTICE_HOME, or PRACTICE_PATH. Using ~/.prac.json");
         let path = dirs::home_dir().context("could not find home directory")?.join(".prac.json");
         Ok(path)
     }
@@ -424,13 +436,13 @@ fn main() -> Result<()> {
 
             println!();
             let now = SystemTime::now();
-            for (name, practice) in state.routines.iter() {
+            for (name, practice) in &state.routines {
                 let mut truncated_name = name.clone();
                 truncated_name.truncate(max_name_len); // better way to do this?
 
-                let start_message = format!(" {:>max_name_len$} ", name);
+                let start_message = format!(" {truncated_name:>max_name_len$} ");
 
-                let hours_cumulative = practice.cumulative.as_secs_f64() / 3600.0;
+                let hours_cumulative = practice.cumulative.as_secs_f64() / 3600.0_f64;
                 let hours_period = practice.period.as_secs_f64() / 3600.0;
 
                 let end_message = match (cumulative, period) {
