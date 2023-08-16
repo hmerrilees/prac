@@ -8,7 +8,7 @@ cargo install --path <path to repo>
 prac help
 ```
 
-If you don't 
+If you don't want to install
 ```
 cargo run --release -- help
 ```
