@@ -156,6 +156,6 @@ intentionally hadn't handled progress bar overflow, resulting in a crash and arb
 
 ## State management warning
 
-I would HIGHLY recommend backing up your state file (@[[state location](#state-location)])
+I would HIGHLY recommend backing up your state file
 State management is so far from stabilized, backwards compatibility is in no way guaranteed.
 As far as I'm concerned, your data may be lost at any time.
