@@ -1,5 +1,5 @@
-//! # an ideological utility to complete a feedback loop conducive to immersive practice in a busy world
-//! ## UI demo + TLDR
+//! # a utility for a feedback-cycle conducive to immersive practice in a busy world
+//! //! ## UI demo + TLDR
 //! ```bash
 //! prac list
 //! ```
