@@ -238,21 +238,6 @@ impl State {
 }
 
 /// Prac: a dead-simple practice-cultivating utility.
-///
-/// Start by adding a practice, see `prac help add`.
-///
-/// When you're stuck on another problem or just need something to do, use `prac list` to find something
-/// else to work on. Progress bars show how long it's been since you last practiced as a fraction
-/// of the period window in which you wish to practice.
-///
-/// When you're done, use `prac track` to log your time.
-///
-/// Use list to view which practices you haven't done in a while.
-/// Use list to view your practices.
-///
-/// I would HIGHLY recommend backing up your state file.
-///
-/// State management is so far from stabilized, zero backwards compatibility is guaranteed.
 #[derive(Parser)]
 pub struct Cli {
     #[command(subcommand)]
