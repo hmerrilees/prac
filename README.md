@@ -1,7 +1,7 @@
 # prac
 ## a utility completing a feedback-cycle conducive to immersive practice in a busy world
 
-# Installation
+## Installation
 install rust, clone repo, then
 ```
 cargo install --path <path to repo>
@@ -21,7 +21,7 @@ cargo build --release
 I will try to get up on crates.io soon, want to make a little more headway on state version compat, and possibly move the more incendiary dogma from the crate docs to my website (which I have yet to host).
 
 
-### UI demo + TLDR
+## UI demo + TLDR
 ```bash
 prac list
 ```
@@ -63,7 +63,7 @@ that is your prerogative, but I will not be helping you.
 I have attempted to make it as difficult as possible to use this tool to "make a project of
 oneself."
 
-### What this is
+## What this is
 A tool to augment a practice-driven life/workflow,
 specifically providing feedback to enable those practices
 which cannot all be done daily, or the efficacy of which is highly sensitive to factors
@@ -76,7 +76,7 @@ a 90-minute alarm clock. This is the motivating philosophy of `prac`.
 If you want, you can get started right now with `prac help`. If you want to see how I
 attempted to integrate the dream theory of flow state, read on to the minifesto.
 
-### Minifesto and user guide
+## Minifesto and user guide
 Begin by negatively scheduling, making time with guarantee only that you will not permit yourself to be otherwise scheduled or interrupted (including by phones/notifications).
 
 After having `prac add`-ed a few practices, you can `prac list` and choose one to _start_ on (how you choose is none of my
@@ -115,7 +115,7 @@ I've implemented only two tracking features, `proc trac` for a bare total of tim
 #### Can I have x feature to track something that I could just as easily track in the plain text notes?
 no.
 
-#### A rant on self-scheduling
+### A rant on self-scheduling
 Ideologically, I despise self-scheduling. Spontaneity is in all things beautiful.
 Forgetfulness is spontaneity in the negative, no less an exercise of freedom.
 Without scheduling we would have much less to forget, and for that I respect scheduling.
@@ -123,7 +123,7 @@ However, I have zero respect for self-scheduling. "Sorry, I can't [be a normal f
 Neither is there spontaneous beauty in forgetting self-orders--you are back where you started except now also a failure.
 When I "succeed" in perfectly following my elaborate self-scheduling, it means that I accomplished something so mundane that I had already totally understood it before I even began.
 
-#### Incedental functionality
+### Incedental functionality
 I used clock periods instead of calendar periods to eliminate the incentive to start at the very beginning of the block (i.e. scheduling).
 Scheduling is not only is somewhat life-denying, also works against the resiliency of your system, as every moment is an opportunity to fail.
 It also fails to tolerate either end of a poorly selected period.
@@ -146,7 +146,7 @@ As a bottom-up feedback utility, and not a top-down compliance regieme, keeping
 with it becomes so much easier.
 
 If life happens, just `prac reset` to wipe the bars, and start again!
-#### Inspiration
+## Inspiration
 
 The initial name was "toDoom" as the interface was
 inspired by [The World's Most Dangerous Writing
@@ -154,7 +154,7 @@ App](https://www.squibler.io/dangerous-writing-prompt-app/write?limit=5&type=min
 intentionally hadn't handled progress bar overflow, resulting in a crash and arbitrary data loss.
 
 
-### State management warning
+## State management warning
 
 I would HIGHLY recommend backing up your state file (@[[state location](#state-location)])
 State management is so far from stabilized, backwards compatibility is in no way guaranteed.
