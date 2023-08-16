@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["GracePeriod","SubCommand"],"fn":["get_state_path","main"],"mod":["utils"],"struct":["Cli","Config","Practice","State"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["TimeUnit"],"fn":["bar","long_edit"]};
