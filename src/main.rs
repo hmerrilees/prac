@@ -15,7 +15,7 @@
 //! ```
 //! > Looks like I haven't done steno in a while... when I get stuck, I'll switch to that.
 //!
-//! When I'm done, I'll `prac track steno 1 hrs` to reset the bar and track time, and `prac log steno` to make some notes on my progress.
+//! When I'm done, I'll `prac track steno 1 hours` to reset the bar and track time, and `prac log steno` to make some notes on my progress.
 //!
 //!
 //! In a state of immersion, time is experienced. In productivity systems, time is controlled--better had than spent, better
