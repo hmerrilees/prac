@@ -1,11 +1,16 @@
-install rust, clone, then
+# prac
+## a utility completing a feedback-cycle conducive to immersive practice in a busy world
+
+# Installation
+install rust, clone repo, then
 ```
-cargo doc --open
+cargo install --path <path to repo>
+prac help
 ```
 
-then
+If you don't 
 ```
-cargo build --release -- help
+cargo run --release -- help
 ```
 or
 ```
@@ -15,9 +20,7 @@ cargo build --release
 
 I will try to get up on crates.io soon, want to make a little more headway on state version compat, and possibly move the more incendiary dogma from the crate docs to my website (which I have yet to host).
 
-# prac
 
-## an ideological utility to complete a feedback loop conducive to immersive practice in a busy world
 ### UI demo + TLDR
 ```bash
 prac list
