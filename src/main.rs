@@ -1,14 +1,5 @@
- #![warn(
-     clippy::all,
-     clippy::restriction,
-     clippy::pedantic,
-     clippy::nursery,
-     clippy::cargo,
- )]
-//! # the dead-simple anti-scheduling practice-cultivating utility 
-//! (for overachieving procrastinators recovering from an unhealthy fixation on self-development)
-//!
-//! ## UI demo
+//! # an ideological utility to complete a feedback loop conducive to immersive practice in a busy world
+//! ## UI demo + TLDR
 //! ```bash
 //! prac list
 //! ```
@@ -24,16 +15,31 @@
 //! ```
 //! > Looks like I haven't done steno in a while... when I get stuck, I'll switch to that.
 //!
+//! When I'm done, I'll `prac track steno 1 hrs` to reset the bar and track time, and `prac log steno` to make some notes on my progress.
 //!
 //!
-//! In `prac` the clock has no control and appears only as purely geometric information to augment the human weakness that is ascertaining one's position in the passage of time.
+//! In a state of immersion, time is experienced. In productivity systems, time is controlled--better had than spent, better
+//! spent than lost. What appears externally to be "lost" time is in fact the negative space prerquisite to immersive states.
+//! We have no business interrupting these states ourselves, but it remains that our immersive drive will eventually outlast 
+//! the focus it can find for any particular task--we get stuck. We require a mechanism to smoothly carry our momentum into the next state of practice.
+//! We need a subtle cue to reintroduce temporal awareness of our other practices
+//! in a manner not so jarring that it will rip us from our direct experience of the present moment.
+//!
+//! In contrast with other tools, in `prac`, the clock has no authority you do not yourself solicit. 
+//! It appears only as an intentionally simple, gentle visual indicator, leaning more on our [Graphical Perception](https://www.jstor.org/stable/2288400) than our numerically-obsessed scheduling proclivities.
+//! The progress bars for each item display time elapsed since last participation as a fraction the period in which we intend to practice.
+//! How you wish to systematize this is up to you, personally, I wouldn't even think about it. 
+//! Just look at it when you get stuck and need something else to do.
 //!
 //! ## What this isn't
-//! This is not a todo list, a calendar, pomodoro timer, a scheduling app, or a habit tracker.
+//! This is not a todo list, a calendar, pomodoro timer, a project manager, a scheduling app, or a habit tracker.
 //!
 //! Design decisions have been made on ideological grounds to intentionally maximize incompatibility with these types of apps.
 //! Neither is this a compliance mechanism, if you wish to Pavlov yourself into a life well lived,
 //! that is your prerogative, but I will not be helping you.
+//!
+//! I have attempted to make it as difficult as possible to use this tool to "make a project of
+//! oneself."
 //!
 //! ## What this is
 //! A tool to augment a practice-driven life/workflow,
@@ -41,18 +47,12 @@
 //! which cannot all be done daily, or the efficacy of which is highly sensitive to factors
 //! knowable only in the moment.
 //!
-//! In a state of immersion, time is experienced.
-//! In many productivity systems, time is controlled--better had than spent, better
-//! spent than lost.
-//!
 //! That REM sleep lifts us gracefully through from one phase of deep sleep to the next at an
 //! average period of ~90 minutes does not make possible reproduction of the effect by way of 
-//! a 90-minute alarm clock. While we cannot stay in flow forever, we can remain in the
-//! experience of time as we allow our natural stuckness to lead our transition to
-//! the next state of practice. This is the motivating philosophy of `prac`.
+//! a 90-minute alarm clock. This is the motivating philosophy of `prac`. 
 //!
 //! If you want, you can get started right now with `prac help`. If you want to see how I
-//! attempted to integrate the dream theory of flow state into, read on to the minifesto.
+//! attempted to integrate the dream theory of flow state, read on to the minifesto.
 //!
 //! ## Minifesto and user guide
 //! Begin by negatively scheduling, making time with guarantee only that you will not permit yourself to be otherwise scheduled or interrupted (including by phones/notifications).
@@ -77,24 +77,21 @@
 //! It's not about when you work, not everything is going to get done, you have X hours no matter what (and should probably limit yourself to even fewer), but more about when you switch between tasks.
 //!
 //! In a mode of practice, control is not exerted by the clock, but follows naturally from the
-//! persons instincts of relative flow and stuckness. 
-//!
-//! When you get stuck, rather than banging your head until your pomodoro takes pity on your soul,
-//! you simply `prac list` to see a handful of tasks with a progress bar showing how long
+//! persons instincts of relative flow and stuckness. When you get stuck, rather than banging your head until your pomodoro takes pity on your soul,
+//! you simply `prac list` to see a handful of practices with a progress bar showing how long
 //! it's been since you last practiced as a fraction of how frequently you wish to practice. This
 //! provides a very gentle way prioritize those practices that have been recently neglected.
 //!
 //! For those who struggle with work-life balance, these tasks can include things like rest, play, socializing, eating, outdoor time, family time, and other practices of self-care.
 //!
+//! This is a feedback tool, not a compliance tool. It's not a big deal if you let a bar run over, take it as a signal that the relavent period needs extending.
+//! If you find yourself regularly finishing early, you've identified that you would benefit from a shorter feedback cycle!
 //!
-//!
-//! I firmly believe that time and quality of practice account for the bulk of competence, and so
+//! I firmly believe that time and quality of practice are responsible for the bulk of actually-existing competence, and so
 //! I've implemented only two tracking features, `proc trac` for a bare total of time, and `prac log` for plain text goal-setting and reflection.
 //!
-//!
-//! It's not a big deal if you let it run over, take it as a sign that you should extend your period. If you find yourself regularly finishing early, you've identified that you would benefit from a shorter feedback cycle!
-//!
-//! Again, it's not a routine app, but I think accidentally it's the best routine app I've ever used. I use clock periods instead of calendar periods to eliminate the incentive to start at the very beginning of the block (i.e. scheduling) and so that "overachievers" wouldn't be waiting so long for the next calendar period that they forget the system, but this also has the side effect that routines tracked earlier the previous day will now have a stronger signal to do it earlier again the next and vice versa. With a 2hr default grace period, there is flexibility (++resilience: you don't give up on your system the moment things don't go to plan) at the same time as it encourages you generally to keep a pattern of habits that work for you at the same time as it encourages you generally to keep to a pattern of habits that work for you.
+//! ### Can I have x feature to track something that I could just as easily track in the plain text notes?
+//! no.
 //!
 //! ### A rant on self-scheduling
 //! Ideologically, I despise self-scheduling. Spontaneity is in all things beautiful.
@@ -104,6 +101,29 @@
 //! Neither is there spontaneous beauty in forgetting self-orders--you are back where you started except now also a failure. 
 //! When I "succeed" in perfectly following my elaborate self-scheduling, it means that I accomplished something so mundane that I had already totally understood it before I even began. 
 //!
+//! ### Incedental functionality
+//! I used clock periods instead of calendar periods to eliminate the incentive to start at the very beginning of the block (i.e. scheduling).
+//! Scheduling is not only is somewhat life-denying, also works against the resiliency of your system, as every moment is an opportunity to fail.
+//! It also fails to tolerate either end of a poorly selected period.
+//! - If the period is too short, iterations form a backlog, and in a state of overwhelm, it is easier to give up on the system.
+//! - If the perriod is too long, Having completed an iteration early in the calendar period, one gets the sense that they should
+//! wait until the next period to start again, artificially drawing out the period, making it very
+//! easy to fall out of habit and accidentally drop the system.
+//!
+//! When you have a daily todo list that also includes practices, it becomes basically impossible
+//! not to plan. Without scheduling is no mechanism to naturally encourage routine engagement in practices at
+//! the same within a calendar period.
+//!
+//! If all your daily tasks are clocked 24 (+ 2hr grace) periods, you are steered naturally towards doing
+//! things more or less at the same time you did them last. When you can keep up, your bar reminds
+//! you not to do something too late, and you know that if you do it too early you will be met with
+//! an early bar tomorrow too. If you can't keep up, it's no big deal, tomorrow's practice window will be
+//! adjusted automatically to when you were able to practice today.
+//!
+//! As a bottom-up feedback utility, and not a top-down compliance regieme, keeping
+//! with it becomes so much easier.
+//!
+//! If life happens, just `prac reset` to wipe the bars, and start again!
 //! ### Inspiration
 //!
 //! The initial name was "toDoom" as the interface was
@@ -111,8 +131,6 @@
 //! App](https://www.squibler.io/dangerous-writing-prompt-app/write?limit=5&type=minutes), and I
 //! intentionally hadn't handled progress bar overflow, resulting in a crash and arbitrary data loss. 
 //!
-//! ## Can I have x feature to track something that I could just as easily track in the plain text notes?
-//! no.
 //!
 //! ## State management warning
 //!
@@ -140,9 +158,11 @@ mod utils;
 use utils::TimeUnit;
 
 // TODO, config edit command
+ /// Configuration state.
 #[derive(Serialize, Deserialize)]
 struct Config {
     grace_period: GracePeriod,
+    /// Version of prac that created this state file.
     version: String,
     // potential versioning compat implementation for new fields: use options on import, and let-else w/
     // defaults on save.
@@ -152,7 +172,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             grace_period: GracePeriod::Fractional(1.1),
-            version: env!("CARGO_PKG_VERSION").to_string(),
+            version: env!("CARGO_PKG_VERSION").to_owned(),
         }
     }
 }
@@ -232,7 +252,7 @@ impl State {
                 // ensure only one item is selected
                 let item = match selected_items.len() {
                     0 => bail!("No item selected"),
-                    1 => selected_items[0].text(),
+                    1 => selected_items.get(0).expect("we know there is one").text(),
                     2.. => bail!("Multiple items selected"),
                     _ => unreachable!(),
                 };
@@ -243,7 +263,7 @@ impl State {
 
         match self.routines.entry(name) {
             btree_map::Entry::Vacant(_) => bail!("Practice not found."),
-            btree_map::Entry::Occupied(o) => Ok(o),
+            btree_map::Entry::Occupied(practice) => Ok(practice),
         }
     }
 }
@@ -384,7 +404,7 @@ fn main() -> Result<()> {
             let new = Practice::new(name.clone(), notes, TimeUnit::to_duration(period, unit));
             state.routines.insert(new.name.clone(), new);
 
-            println!("Added practice {}.", name);
+            println!("Added practice {name}.");
 
             if state.routines.len() == 1 {
                 println!("You can view your practice with `prac list`. It may take a little time elapsed for progress bars to progress to display a character.");
@@ -430,8 +450,9 @@ fn main() -> Result<()> {
                 .keys()
                 .map(|name| name.len())
                 .max()
-                .unwrap_or(0);
-            let max_name_len = max_name_len.max(30);
+                .unwrap_or(0)
+                 .max(30); // TODO magic number
+             
             let term_width = termsize::get().context("failed to obtain termsize")?.cols;
 
             println!();
@@ -476,7 +497,7 @@ fn main() -> Result<()> {
                     end_message
                 );
 
-                println!("{}", whole_bar);
+                println!("{whole_bar}");
             }
             println!();
         }

@@ -13,7 +13,7 @@ use anyhow::{Context, Result};
 
 /// A unit of time.
 #[derive(ValueEnum, Clone, Serialize, Deserialize)]
-pub(super) enum TimeUnit {
+pub enum TimeUnit {
     Hours,
     Days,
     Weeks,
@@ -22,21 +22,21 @@ pub(super) enum TimeUnit {
 }
 
 impl TimeUnit {
-    pub(super) fn to_duration(num: u64, unit: TimeUnit) -> Duration {
-        Duration::from_secs(
+    pub(super) fn to_duration(num: u64, unit: Self) -> Duration {
+        return Duration::from_secs(
             num * match unit {
-                TimeUnit::Hours => 60 * 60,
-                TimeUnit::Days => 60 * 60 * 24,
-                TimeUnit::Weeks => 60 * 60 * 24 * 7,
-                TimeUnit::Months => 60 * 60 * 24 * 30, // I'm terribly sorry
-                TimeUnit::Years => 60 * 60 * 24 * 365,
+                Self::Hours => 60 * 60,
+                Self::Days => 60 * 60 * 24,
+                Self::Weeks => 60 * 60 * 24 * 7,
+                Self::Months => 60 * 60 * 24 * 30, // I'm terribly sorry
+                Self::Years => 60 * 60 * 24 * 365,
             },
-        )
+        );
     }
 }
 
 /// Write content to file
-pub(super) fn long_edit(content: Option<String>) -> Result<String> {
+pub fn long_edit(content: Option<String>) -> Result<String> {
     let editor = var("EDITOR").context("EDITOR environment variable not found.")?;
 
     let mut file_path = temp_dir();
@@ -62,7 +62,7 @@ pub(super) fn long_edit(content: Option<String>) -> Result<String> {
 }
 
 /// generate a bar for a practice
-pub(super) fn bar(bar_width: usize, mut fraction: f64) -> String {
+pub fn bar(bar_width: usize, mut fraction: f64) -> String {
     fraction = fraction.max(0.0).min(1.0);
     //.with_context(|| "fraction must be between 0 and 1")?;
     let filled = (fraction * bar_width as f64) as usize;
