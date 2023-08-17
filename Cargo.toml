@@ -1,10 +1,15 @@
 [package]
 name = "prac"
+authors = ["Henry Merrilees <henry@merrile.es>"]
+description = "a utility for a feedback-cycle conducive to immersive practice in a busy world"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/henry-merrilees/prac"
 homepage = "https://github.com/henry-merrilees/prac"
+keyworks = ["productivity", "cli", "practice"]
+categories = ["command-line-utilities"]
+
 
 
 [dependencies]

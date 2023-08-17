@@ -8,8 +8,6 @@
 //! ```
 //! If this doesn't work, you may have yet to add `~/.cargo/bin` to your path.
 //! 
-//! I will try to get up on crates.io soon, want to make a little more headway on state version compat, and possibly move the more incendiary dogma from the crate docs to my website (which I have yet to host).
-//! 
 //! //! ## UI demo + TLDR
 //! 
 //! ```bash
