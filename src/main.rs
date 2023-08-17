@@ -279,6 +279,26 @@ impl State {
             btree_map::Entry::Occupied(practice) => Ok(practice),
         }
     }
+
+    fn get_path() -> Result<PathBuf> {
+        if let Ok(practice_path) = var("PRACTICE_PATH") {
+            let path = PathBuf::from(practice_path);
+            Ok(path)
+        } else if let Ok(practice_home) = var("PRACTICE_HOME") {
+            let practice_home = PathBuf::from(practice_home);
+            std::fs::create_dir_all(&practice_home).context("$PRACTICE_HOME specified but could not be created.")?;
+            let path = practice_home.join("prac.json");
+            Ok(path)
+        } else if let Some(data_home) = dirs::data_dir() {
+            let default_dir = data_home.join("prac");
+            std::fs::create_dir_all(&default_dir).with_context(|| format!("could not create {}", default_dir.display()))?;
+            let path = default_dir.join("prac.json");
+            Ok(path)
+        } else {
+            let path = dirs::home_dir().context("could not find home directory")?.join(".prac.json");
+            Ok(path)
+        }
+    }
 }
 
 /// Prac: a dead-simple practice-cultivating utility.
@@ -309,7 +329,7 @@ enum SubCommand {
         #[arg(short, long)]
         notes: Option<String>,
         /// Anticipated time period between practice sessions. (There is a 2 hr grace period by default.)
-        period: u64,
+        period: f64,
         #[arg(value_enum)]
         time_unit: TimeUnit,
     },
@@ -318,7 +338,7 @@ enum SubCommand {
         /// Specify, or leave blank to fuzzy search.
         name: Option<String>,
         /// How long you practiced for. This is added to the cumulative time displayed in `prac list --cumulative`.
-        time: u64,
+        time: f64,
         #[arg(value_enum)]
         time_unit: TimeUnit,
         /// An optional shortcut to `prac log` when you're done.
@@ -336,7 +356,7 @@ enum SubCommand {
         /// Specify, or leave blank to fuzzy search.
         name: Option<String>,
         /// Anticipated time period between practice sessions. (There is a 2 hr grace period by default.)
-        period: u64,
+        period: f64,
         #[arg(value_enum)]
         time_unit: TimeUnit,
     },
@@ -362,27 +382,8 @@ enum SubCommand {
 }
 
 
-fn get_state_path() -> Result<PathBuf> {
-    if let Ok(practice_path) = var("PRACTICE_PATH") {
-        let path = PathBuf::from(practice_path);
-        Ok(path)
-    } else if let Ok(practice_home) = var("PRACTICE_HOME") {
-        let practice_home = PathBuf::from(practice_home);
-        std::fs::create_dir_all(&practice_home).context("$PRACTICE_HOME specified but could not be created.")?;
-        let path = practice_home.join("prac.json");
-        Ok(path)
-    } else if let Some(data_home) = dirs::data_dir() {
-        let default_dir = data_home.join("prac");
-        std::fs::create_dir_all(&default_dir).with_context(|| format!("could not create {}", default_dir.display()))?;
-        let path = default_dir.join("prac.json");
-        Ok(path)
-    } else {
-        let path = dirs::home_dir().context("could not find home directory")?.join(".prac.json");
-        Ok(path)
-    }
-}
 fn main() -> Result<()> {
-    let state_path = get_state_path()?;
+    let state_path = State::get_path()?;
 
     // return file if exists, if open fails, tansform to create new file.
 

@@ -14,6 +14,7 @@ use anyhow::{Context, Result};
 /// A unit of time.
 #[derive(ValueEnum, Clone, Serialize, Deserialize)]
 pub enum TimeUnit {
+    Minutes,
     Hours,
     Days,
     Weeks,
@@ -22,16 +23,17 @@ pub enum TimeUnit {
 }
 
 impl TimeUnit {
-    pub(super) fn to_duration(num: u64, unit: Self) -> Duration {
-        return Duration::from_secs(
+    pub(super) fn to_duration(num: f64, unit: Self) -> Duration {
+        Duration::from_secs_f64(
             num * match unit {
+                Self::Minutes => 60,
                 Self::Hours => 60 * 60,
                 Self::Days => 60 * 60 * 24,
                 Self::Weeks => 60 * 60 * 24 * 7,
                 Self::Months => 60 * 60 * 24 * 30, // I'm terribly sorry
                 Self::Years => 60 * 60 * 24 * 365,
-            },
-        );
+            } as f64,
+        )
     }
 }
 
