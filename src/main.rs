@@ -1,5 +1,17 @@
 //! # a utility for a feedback-cycle conducive to immersive practice in a busy world
+//! 
+//! ## Installation
+//! install rust, clone repo, then
+//! ```
+//! cargo install --path <path to repo>
+//! prac help
+//! ```
+//! If this doesn't work, you may have yet to add `~/.cargo/bin` to your path.
+//! 
+//! I will try to get up on crates.io soon, want to make a little more headway on state version compat, and possibly move the more incendiary dogma from the crate docs to my website (which I have yet to host).
+//! 
 //! //! ## UI demo + TLDR
+//! 
 //! ```bash
 //! prac list
 //! ```
@@ -15,7 +27,7 @@
 //! ```
 //! > Looks like I haven't done steno in a while... when I get stuck, I'll switch to that.
 //!
-//! When I'm done, I'll `prac track steno 1 hours` to reset the bar and track time, and `prac log steno` to make some notes on my progress.
+//! When I'm done, I'll ```prac track steno 2 hours``` to reset the bar and track time, and ```prac log steno``` to make some notes on my progress.
 //!
 //!
 //! In a state of immersion, time is experienced. In productivity systems, time is controlled--better had than spent, better
@@ -30,6 +42,8 @@
 //! The progress bars for each item display time elapsed since last participation as a fraction the period in which we intend to practice.
 //! How you wish to systematize this is up to you, personally, I wouldn't even think about it. 
 //! Just look at it when you get stuck and need something else to do.
+//!
+//! If life happens, just `prac reset` to wipe the bars, and start again! It's no big deal.
 //!
 //! ## What this isn't
 //! This is not a todo list, a calendar, pomodoro timer, a project manager, a scheduling app, or a habit tracker.
@@ -123,7 +137,6 @@
 //! As a bottom-up feedback utility, and not a top-down compliance regieme, keeping
 //! with it becomes so much easier.
 //!
-//! If life happens, just `prac reset` to wipe the bars, and start again!
 //! ### Inspiration
 //!
 //! The initial name was "toDoom" as the interface was
@@ -134,7 +147,7 @@
 //!
 //! ## State management warning
 //!
-//! I would HIGHLY recommend backing up your state file (@[[state location](#state-location)])
+//! I would HIGHLY recommend backing up your state file (@`prac state-location`).
 //! State management is so far from stabilized, backwards compatibility is in no way guaranteed.
 //! As far as I'm concerned, your data may be lost at any time.
 
