@@ -30,7 +30,7 @@ distributed systems programming ▬▬▬
 ```
 > Looks like I haven't done steno in a while... when I get stuck, I'll switch to that.
 
-When I'm done, I'll ```prac track steno 2 hours``` to reset the bar and track time, and ```prac log steno``` to make some notes on my progress.
+When I'm done, I'll ```prac log steno 2 hours``` to reset the bar and track time, and ```prac notes steno``` to make some notes w/ $EDITOR on my progress.
 
 
 In a state of immersion, time is experienced. In productivity systems, time is controlled--better had than spent, better
@@ -105,7 +105,7 @@ This is a feedback tool, not a compliance tool. It's not a big deal if you let a
 If you find yourself regularly finishing early, you've identified that you would benefit from a shorter feedback cycle!
 
 I firmly believe that time and quality of practice are responsible for the bulk of actually-existing competence, and so
-I've implemented only two tracking features, `proc trac` for a bare total of time, and `prac log` for plain text goal-setting and reflection.
+I've implemented only two tracking features, `proc trac` for a bare total of time, and `prac notes` for plain text goal-setting and reflection.
 
 #### Can I have x feature to track something that I could just as easily track in the plain text notes?
 no.
