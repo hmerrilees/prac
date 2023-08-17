@@ -27,7 +27,7 @@
 //! ```
 //! > Looks like I haven't done steno in a while... when I get stuck, I'll switch to that.
 //!
-//! When I'm done, I'll ```prac track steno 2 hours``` to reset the bar and track time, and ```prac log steno``` to make some notes w/ $EDITOR on my progress.
+//! When I'm done, I'll ```prac log steno 2 hours``` to reset the bar and track time, and ```prac notes steno``` to make some notes w/ $EDITOR on my progress.
 //!
 //!
 //! In a state of immersion, time is experienced. In productivity systems, time is controlled--better had than spent, better
@@ -102,7 +102,7 @@
 //! If you find yourself regularly finishing early, you've identified that you would benefit from a shorter feedback cycle!
 //!
 //! I firmly believe that time and quality of practice are responsible for the bulk of actually-existing competence, and so
-//! I've implemented only two tracking features, `proc trac` for a bare total of time, and `prac log` for plain text goal-setting and reflection.
+//! I've implemented only two tracking features, `proc trac` for a bare total of time, and `prac notes` for plain text goal-setting and reflection.
 //!
 //! ### Can I have x feature to track something that I could just as easily track in the plain text notes?
 //! no.
@@ -312,7 +312,7 @@ struct Cli {
 // TODO: config edit command
 #[derive(Subcommand)]
 enum SubCommand {
-    /// List practices, with a progress bar showing time elapsed through period since last practice. See `help list` for options.
+    /// list w/ progress bars showing time elapsed through period since last practice. `help list` for options
     List {
         /// Show cumulative hours tracked alongside practices.
         #[arg(short, long)]
@@ -321,7 +321,7 @@ enum SubCommand {
         #[arg(short, long)]
         period: bool,
     },
-    /// Add a new practice. See `help add` for usage.
+    /// `help add` for usage
     Add {
         /// A (unique) name for the practice.
         name: String,
@@ -333,24 +333,35 @@ enum SubCommand {
         #[arg(value_enum)]
         time_unit: TimeUnit,
     },
-    /// Mark a practice completion, tracking time spent. See `help track` for usage.
-    Track {
+    /// After you practice, `prac log <name> <time> <unit>` to reset the bar and track time.
+    Log {
         /// Specify, or leave blank to fuzzy search.
         name: Option<String>,
         /// How long you practiced for. This is added to the cumulative time displayed in `prac list --cumulative`.
         time: f64,
         #[arg(value_enum)]
         time_unit: TimeUnit,
-        /// An optional shortcut to `prac log` when you're done.
+        /// An optional shortcut to `prac notes` when you're done.
         #[arg(short, long)]
-        log: bool,
+        notes: bool,
     },
-    /// Edit practice notes w/ your $EDITOR. Each practice has its own log.
-    Log {
+    /// Edit practice notes. Each practice has its own page.
+    Notes {
         /// Specify practice to edit, or leave blank to fuzzy search.
         name: Option<String>,
     },
-    /// Edit practice period.
+    /// Reset all progress bars if you fall behind.
+    /// Equivalent to tracking all practices w/ zero time.
+    Reset,
+    /// Show state file location.
+    ///
+    /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, [dirs::data_dir]/prac/prac.json 
+    /// or [dirs::home_dir]/.prac.json, searched in that order.
+    ///
+    /// It's a good idea to vcs your state file.
+    StateLocation,
+    /// 
+    /// Edit the period of a practice.
     #[command(alias = "ep")]
     EditPeriod {
         /// Specify, or leave blank to fuzzy search.
@@ -360,25 +371,16 @@ enum SubCommand {
         #[arg(value_enum)]
         time_unit: TimeUnit,
     },
-    /// Delete a practice.
     Remove {
         /// Specify name of practice to remove, or leave blank to fuzzy search.
         name: Option<String>,
     },
-    /// Rename practice.
     Rename {
+        /// Current (old) name of practice.
         current_name: String,
+        /// New name of practice.
         new_name: String,
     },
-    /// Reset progress bars. Equivalent to tracking all practices w/ zero time.
-    Reset,
-    /// Show state file location.
-    ///
-    /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, [dirs::data_dir]/prac/prac.json 
-    /// or [dirs::home_dir]/.prac.json, searched in that order.
-    ///
-    /// It's a good idea to vcs your state file.
-    StateLocation,
 }
 
 
@@ -409,7 +411,12 @@ fn main() -> Result<()> {
         } => {
             let notes = notes.unwrap_or_else(|| {
                 let placeholder = if state.routines.is_empty() { 
-                        Some("Welcome! Here you can set some clear goals. You can log your progress and view this page later in your $EDITOR with `prac log`.".to_string())
+                        Some("\
+                            When you complete a practice, you should log it with `prac log`.\n\
+                            Come back to these practice notes and view this page later in your $EDITOR with `prac notes`. \n\
+                            When you get stuck, you can view all your practices (and how far along they are in their periods) with `prac list`.\n\
+                            Delete this message and set some clear goals for your first practice!\
+                            ".to_string())
                     } else {None};
 
                 utils::long_edit(placeholder).unwrap()
@@ -424,11 +431,11 @@ fn main() -> Result<()> {
                 println!("You can view your practice with `prac list`. It may take a little time elapsed for progress bars to progress to display a character.");
             }
         }
-        SubCommand::Track {
+        SubCommand::Log {
             name,
             time,
             time_unit: unit,
-            log,
+            notes: log,
         } => {
             let mut find = state.find(name.as_deref())?;
             let practice = find.get_mut();
@@ -441,10 +448,10 @@ fn main() -> Result<()> {
                 let body = utils::long_edit(Some(practice.notes.clone()))?;
                 practice.notes = body;
             } else {
-                println!("Good job! It's a good idea to make notes on your progress with `prac log`.");
+                println!("Good job! It's a good idea to make notes on your progress with `prac notes`.");
             }
         }
-        SubCommand::Log { name } => {
+        SubCommand::Notes { name } => {
             let mut find = state.find(name.as_deref())?;
             let practice = find.get_mut();
             let body = utils::long_edit(Some(practice.notes.clone()))?;
@@ -465,7 +472,7 @@ fn main() -> Result<()> {
                 .map(|name| name.len())
                 .max()
                 .unwrap_or(0)
-                 .max(30); // TODO magic number
+                 .min(30); // TODO magic number
              
             let term_width = termsize::get().context("failed to obtain termsize")?.cols;
 
