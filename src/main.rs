@@ -312,7 +312,9 @@ struct Cli {
 // TODO: config edit command
 #[derive(Subcommand)]
 enum SubCommand {
-    /// list w/ progress bars showing time elapsed through period since last practice. `help list` for options
+    /// List practices w/ progress bars showing time elapsed through period. `help list` for options
+    /// Use this when you get stuck on another task, want to switch to something else, and would be
+    /// benefitted by knowing how long it's been since you last .
     List {
         /// Show cumulative hours tracked alongside practices.
         #[arg(short, long)]
@@ -321,7 +323,7 @@ enum SubCommand {
         #[arg(short, long)]
         period: bool,
     },
-    /// `help add` for usage
+    /// Add a new practice: `help add <name> <period> <unit>`.
     Add {
         /// A (unique) name for the practice.
         name: String,
@@ -360,8 +362,6 @@ enum SubCommand {
     ///
     /// It's a good idea to vcs your state file.
     StateLocation,
-    /// 
-    /// Edit the period of a practice.
     #[command(alias = "ep")]
     EditPeriod {
         /// Specify, or leave blank to fuzzy search.
@@ -482,19 +482,19 @@ fn main() -> Result<()> {
                 let mut truncated_name = name.clone();
                 truncated_name.truncate(max_name_len); // better way to do this?
 
-                let start_message = format!(" {truncated_name:>max_name_len$} ");
+                let start_message = format!("  {truncated_name:>max_name_len$} ");
 
                 let hours_cumulative = practice.cumulative.as_secs_f64() / 3600.0_f64;
                 let hours_period = practice.period.as_secs_f64() / 3600.0;
 
                 let end_message = match (cumulative, period) {
                     (true, true) => format!(
-                        " {:>4}h c  {:>4}h p ",
+                        " {:>4}h c  {:>4}h p  ",
                         hours_cumulative as u64, hours_period as u64
                     ),
-                    (true, false) => format!(" {:>4}h cumulative ", hours_cumulative as u64),
-                    (false, true) => format!(" {:>4}h period ", hours_period as u64),
-                    (false, false) => String::new(),
+                    (true, false) => format!(" {:>4}h cumulative  ", hours_cumulative as u64),
+                    (false, true) => format!(" {:>4}h period  ", hours_period as u64),
+                    (false, false) => String::from("  "),
                 };
 
                 let elapsed = now
