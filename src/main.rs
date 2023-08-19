@@ -279,12 +279,12 @@ impl State {
     }
 
     fn get_path() -> Result<PathBuf> {
-        if let Ok(practice_path) = var("PRACTICE_PATH") {
+        if let Ok(practice_path) = var("PRAC_PATH") {
             let path = PathBuf::from(practice_path);
             Ok(path)
-        } else if let Ok(practice_home) = var("PRACTICE_HOME") {
+        } else if let Ok(practice_home) = var("PRAC_HOME") {
             let practice_home = PathBuf::from(practice_home);
-            std::fs::create_dir_all(&practice_home).context("$PRACTICE_HOME specified but could not be created.")?;
+            std::fs::create_dir_all(&practice_home).context("$PRAC_HOME specified but could not be created.")?;
             let path = practice_home.join("prac.json");
             Ok(path)
         } else if let Some(data_home) = dirs::data_dir() {
