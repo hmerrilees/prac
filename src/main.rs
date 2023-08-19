@@ -457,7 +457,36 @@ fn main() -> Result<()> {
         }
         SubCommand::Remove { name } => {
             let practice = state.find(name.as_deref())?;
-            practice.remove();
+            let name = practice.get().name.clone();
+            let confirm = format!("Confirm remove {}", name);
+            // Confirm
+            // TODO this is terrible
+            let options = SkimOptionsBuilder::default().build().unwrap();
+            let items = SkimItemReader::default().of_bufread(Cursor::new(
+                [&confirm, "Abort"].join("\n")
+            ));
+
+            // TODO figure out what these errors acutally are
+            let selected_items = Skim::run_with(&options, Some(items))
+                .context("Selection error.")?
+                .selected_items;
+
+            // ensure only one item is selected
+            let item = match selected_items.len() {
+                0 => bail!("No item selected"),
+                1 => selected_items.get(0).expect("we know there is one").text(),
+                2.. => bail!("Multiple items selected"),
+                _ => unreachable!(),
+            };
+
+            if item != confirm {
+                println!("Aborting.");
+                return Ok(());
+            } else {
+                practice.remove();
+                print !("Removed {}", name);
+            }
+
         }
         SubCommand::List { cumulative, period } => {
             if state.routines.is_empty() {
