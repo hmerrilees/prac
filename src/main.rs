@@ -68,9 +68,8 @@
 //! that you need to adjust the period of your feedback cycle!
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
-use skim::prelude::*;
 use std::collections::btree_map;
-use std::io::Cursor;
+use std::fmt::{Display, Formatter};
 use std::{
     collections::BTreeMap,
     env::var,
@@ -81,6 +80,8 @@ use std::{
 };
 
 use anyhow::{bail, Context, Result};
+
+use dialoguer::{FuzzySelect, Input};
 
 mod utils;
 use utils::TimeUnit;
@@ -114,7 +115,7 @@ enum GracePeriod {
 // TODO, solve backwards compatibility issue, see Config
 #[derive(Serialize, Deserialize, Default)]
 struct State {
-    routines: BTreeMap<String, Practice>,
+    practices: BTreeMap<String, Practice>,
     config: Config,
 }
 
@@ -132,6 +133,16 @@ struct Practice {
     cumulative: Duration,
     // TODO maybe a Completion struct? then a body enum {practice, Task} that contains Vec<Comepletion> for practice and raw
     // Completion for task. Trying not to prematurely optimize.
+}
+
+impl Display for Practice {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        if self.name.contains(' ') {
+            write!(f, "\"{}\"", self.name)
+        } else {
+            write!(f, "{}", self.name)
+        }
+    }
 }
 
 impl Practice {
@@ -157,40 +168,32 @@ impl State {
         Self::default()
     }
 
-    fn find(&mut self, name: Option<&str>) -> Result<btree_map::OccupiedEntry<String, Practice>> {
-        let name = name
-            .context("name not provided")
-            .map(String::from)
-            .or_else(|_e| {
-                let options = SkimOptionsBuilder::default().build().unwrap();
+    fn find_name(&self) -> Result<String> {
+        let options = &self.practices.keys().collect::<Vec<_>>();
 
-                let items = SkimItemReader::default().of_bufread(Cursor::new(
-                    self.routines
-                        .keys()
-                        .map(|k| format!("{}", k))
-                        .collect::<Vec<_>>()
-                        .join("\n"),
-                ));
+        let selection_index = FuzzySelect::new()
+            .with_prompt("Select practice")
+            .items(options)
+            .interact_opt()
+            .context("Selection error.")?;
 
-                // TODO figure out what these errors acutally are
-                let selected_items = Skim::run_with(&options, Some(items))
-                    .context("Selection error.")?
-                    .selected_items;
+        match selection_index {
+            Some(i) => Ok(options[i].to_owned()),
+            None => bail!("No item selected"),
+        }
+    }
 
-                // ensure only one item is selected
-                let item = match selected_items.len() {
-                    0 => bail!("No item selected"),
-                    1 => selected_items.get(0).expect("we know there is one").text(),
-                    2.. => bail!("Multiple items selected"),
-                    _ => unreachable!(),
-                };
+    fn find_mut(
+        &mut self,
+        name: Option<&str>,
+    ) -> Result<btree_map::OccupiedEntry<String, Practice>> {
+        let name = match name {
+            Some(name) => name.to_owned(),
+            None => self.find_name()?,
+        };
 
-                Ok(item.into())
-            })
-            .context("failure to obtain name")?;
-
-        match self.routines.entry(name) {
-            btree_map::Entry::Vacant(_) => bail!("Practice not found."),
+        match self.practices.entry(name) {
+            btree_map::Entry::Vacant(_) => bail!("Practice not found. (Case sensitive)"),
             btree_map::Entry::Occupied(practice) => Ok(practice),
         }
     }
@@ -294,9 +297,7 @@ enum SubCommand {
     },
     Rename {
         /// Current (old) name of practice.
-        current_name: String,
-        /// New name of practice.
-        new_name: String,
+        current_name: Option<String>,
     },
 }
 
@@ -325,8 +326,11 @@ fn main() -> Result<()> {
             period,
             time_unit: unit,
         } => {
+            if state.practices.contains_key(&name) {
+                bail!("Practice with name `{}` already exists.", &name);
+            }
             let notes = notes.unwrap_or_else(|| {
-                let placeholder = if state.routines.is_empty() {
+                let placeholder = if state.practices.is_empty() {
                         Some("\
                             When you complete a practice, you should log it with `prac log`.\n\
                             Come back to these practice notes and view this page later in your `$EDITOR` with `prac notes`. \n\
@@ -339,11 +343,11 @@ fn main() -> Result<()> {
             });
 
             let new = Practice::new(name.clone(), notes, TimeUnit::to_duration(period, unit));
-            state.routines.insert(new.name.clone(), new);
+            state.practices.insert(new.name.clone(), new);
 
-            println!("Added practice {name}.");
+            println!("Added practice `{name}`.");
 
-            if state.routines.len() == 1 {
+            if state.practices.len() == 1 {
                 println!("You can view your practice with `prac list`. It may take a little time elapsed for progress bars to progress to display a character.");
             }
         }
@@ -353,7 +357,7 @@ fn main() -> Result<()> {
             time_unit: unit,
             notes: log,
         } => {
-            let mut find = state.find(name.as_deref())?;
+            let mut find = state.find_mut(name.as_deref())?;
             let practice = find.get_mut();
             practice.logged = SystemTime::now();
 
@@ -364,55 +368,47 @@ fn main() -> Result<()> {
                 let body = utils::long_edit(Some(practice.notes.clone()))?;
                 practice.notes = body;
             } else {
+                // if there is whitespace in notes, surround in quotes
                 println!(
-                    "Good job! It's a good idea to make notes on your progress with `prac notes`."
+                    "Logged. Be sure to make notes on your progress with `prac notes {practice}`."
                 );
             }
         }
         SubCommand::Notes { name } => {
-            let mut find = state.find(name.as_deref())?;
+            let mut find = state.find_mut(name.as_deref())?;
             let practice = find.get_mut();
             let body = utils::long_edit(Some(practice.notes.clone()))?;
             practice.notes = body;
         }
         SubCommand::Remove { name } => {
-            let practice = state.find(name.as_deref())?;
+            let practice = state.find_mut(name.as_deref())?;
             let name = practice.get().name.clone();
-            let confirm = format!("Confirm remove {}", name);
-            // Confirm
-            // TODO this is terrible
-            let options = SkimOptionsBuilder::default().build().unwrap();
-            let items =
-                SkimItemReader::default().of_bufread(Cursor::new([&confirm, "Abort"].join("\n")));
 
-            // TODO figure out what these errors acutally are
-            let selected_items = Skim::run_with(&options, Some(items))
-                .context("Selection error.")?
-                .selected_items;
+            let delete_message = format!("CONFIRM DELETE {}", name);
 
-            // ensure only one item is selected
-            let item = match selected_items.len() {
-                0 => bail!("No item selected"),
-                1 => selected_items.get(0).expect("we know there is one").text(),
-                2.. => bail!("Multiple items selected"),
-                _ => unreachable!(),
-            };
+            let confirm = Input::<String>::new()
+                .with_prompt(format!(
+                    "Type \"{delete_message}\" to remove practice (case sensitive)"
+                ))
+                .allow_empty(true)
+                .interact()
+                .is_ok_and(|s| s == delete_message);
 
-            if item != confirm {
-                println!("Aborting.");
-                return Ok(());
-            } else {
+            if confirm {
                 practice.remove();
                 print!("Removed {}", name);
+            } else {
+                println!("Aborting.");
+                return Ok(());
             }
         }
         SubCommand::List { cumulative, period } => {
-            if state.routines.is_empty() {
+            if state.practices.is_empty() {
                 println!("You don't have any practices yet. Add some with `prac add`.");
                 return Ok(());
             }
             let max_name_len = state
-                .routines
+                .practices
                 .keys()
                 .map(|name| name.len())
                 .max()
@@ -423,7 +419,7 @@ fn main() -> Result<()> {
 
             println!();
             let now = SystemTime::now();
-            for (name, practice) in &state.routines {
+            for (name, practice) in &state.practices {
                 let mut truncated_name = name.clone();
                 truncated_name.truncate(max_name_len); // better way to do this?
 
@@ -467,16 +463,30 @@ fn main() -> Result<()> {
             }
             println!();
         }
-        SubCommand::Rename {
-            current_name: name,
-            new_name,
-        } => {
-            let mut practice = state.routines.remove(&name).context("practice not found")?;
+        SubCommand::Rename { current_name } => {
+            // Annoying constraints here of having to know name of existing practice prior to rename
+            // And then only having one mutable borrow of practices
+            let found_name = match current_name {
+                Some(name) => name.to_owned(),
+                None => state.find_name()?,
+            };
+            let new_name = Input::<String>::new()
+                .with_prompt(format!("New name for {found_name}"))
+                .interact()?;
+
+            if state.practices.contains_key(&new_name) {
+                bail!("Practice with name `{}` already exists.", new_name);
+            }
+
+            let mut practice = state
+                .practices
+                .remove(&found_name)
+                .with_context(|| format!("Practice `{}` not found.", found_name))?;
             practice.name = new_name.clone();
-            state.routines.insert(new_name, practice);
+            state.practices.insert(new_name, practice);
         }
         SubCommand::Reset => {
-            for practice in state.routines.values_mut() {
+            for practice in state.practices.values_mut() {
                 practice.logged = SystemTime::now();
             }
         }
@@ -485,7 +495,7 @@ fn main() -> Result<()> {
             period,
             time_unit: unit,
         } => {
-            let mut find = state.find(Some(&name))?;
+            let mut find = state.find_mut(Some(&name))?;
             let practice = find.get_mut();
             let period = TimeUnit::to_duration(period, unit);
             practice.period = period;
