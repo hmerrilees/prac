@@ -1,6 +1,6 @@
 //! # The feedback-oriented utility for a practice-oriented life.
 //!
-//! ## UI demo + TLDR
+//! # UI demo + TLDR
 //! 
 //! ```bash
 //! prac list
@@ -19,17 +19,19 @@
 //!
 //! When I'm done, I'll ```prac log steno 2 hours``` to reset the bar and track time, and ```prac notes steno``` to make some notes w/ $EDITOR on my progress.
 //!
-//! ### Motivation
+//! # Motivation, problem, and solution(?)
+//!
+//! ## Motivation
 //! Developing skill takes time + structure. prac attempts to promote both while being as lightweight as possible.
 //!
 //!
-//! ### Solving the right problems.
+//! ## Solving the right problems.
 //! To remain lightweight, prac sticks only to problems that (to me) most obviously need solving:
 //! - "What should I do now?" in instances where pre-planning is inadviseable or impossible,
 //! - losing track of practices I haven't done in a while, and
 //! - progress and time tracking without excessive overhead or breaking flow.
 //!
-//! ### What's so special about prac?
+//! ## What's so special about prac?
 //! Not much, and that's on purpose, but there are a few key differences:
 //! - Rather than "events" being triggered by the clock/calendar, which are not privileged to your
 //!    psychological state, the proc lifecycle starts when the user gets stuck in their current task 
