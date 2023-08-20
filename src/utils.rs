@@ -11,15 +11,20 @@ use serde::{Deserialize, Serialize};
 
 use anyhow::{Context, Result};
 
-
 /// A unit of time.
 #[derive(ValueEnum, Clone, Serialize, Deserialize)]
 pub enum TimeUnit {
+    #[clap(alias = "minutes")]
     Minutes,
+    #[clap(alias = "hour")]
     Hours,
+    #[clap(alias = "day")]
     Days,
+    #[clap(alias = "week")]
     Weeks,
+    #[clap(alias = "month")]
     Months,
+    #[clap(alias = "year")]
     Years,
 }
 
@@ -37,7 +42,6 @@ impl TimeUnit {
         )
     }
 }
-
 
 /// Write content to file
 pub fn long_edit(content: Option<String>) -> Result<String> {

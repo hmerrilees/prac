@@ -7,7 +7,7 @@ edition = "2021"
 license = "MIT"
 repository = "https://github.com/henry-merrilees/prac"
 homepage = "https://github.com/henry-merrilees/prac"
-keyworks = ["productivity", "cli", "practice"]
+keywords = ["productivity", "cli", "practice"]
 categories = ["command-line-utilities"]
 
 

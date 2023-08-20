@@ -1,7 +1,11 @@
 //! # The feedback-oriented utility for a practice-oriented life.
 //!
 //! # UI demo + TLDR
-//! 
+//! Let's say we'd like to set a new practice of making a weekly repo, well... every week.
+//! ```bash
+//! prac add "weekly repo" 1 week
+//! ```
+//! Now, we can view "weekly repo" alongside all our practices.
 //! ```bash
 //! prac list
 //! ```
@@ -11,13 +15,17 @@
 //!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //!                     kierkegaard ▬▬▬▬▬▬▬
 //!                           steno ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                     weekly repo ▬▬▬
-//!
-//! (tip: use `prac list --cumulative` to see cumulative hours tracked, are we 10000 yet?)
+//!                     weekly repo
 //! ```
-//! > Looks like I haven't done steno in a while... when I get stuck, I'll switch to that.
+//! > As time elapses through the weekly repo's period, the bar will fill like the rest.
 //!
-//! When I'm done, I'll ```prac log steno 2 hours``` to reset the bar and track time, and ```prac notes steno``` to make some notes w/ $EDITOR on my progress.
+//! Looks like I haven't done steno in a while... when I get stuck with whatever I'm doing, I'll switch to that.
+//!
+//! When I'm done, I'll ```prac log steno 30 minutes``` to reset the bar and track time, and ```prac notes steno``` to make some notes with `$EDITOR` on my progress.
+//!
+//! (tip: use `prac list --cumulative` to see cumulative hours logged, are we 10000 yet?)
+//!
+//! Be sure to explore `prac help` and `prac help <subcommand>` for more.
 //!
 //! # Motivation, problem, and solution(?)
 //!
@@ -25,22 +33,25 @@
 //! Developing skill takes time + structure. prac attempts to promote both while being as lightweight as possible.
 //!
 //!
-//! ## Solving the right problems.
-//! To remain lightweight, prac sticks only to problems that (to me) most obviously need solving:
-//! - "What should I do now?" in instances where pre-planning is inadviseable or impossible,
+//! ## Solving the right problems
+//! To remain lightweight, prac sticks only to problems that (to me) most obviously need solving.
+//!
+//! Primarily,
+//! - "what should I do now?" in instances where pre-planning is inadviseable or impossible,
 //! - losing track of practices I haven't done in a while, and
-//! - progress and time tracking without excessive overhead or breaking flow.
+//! - progress/time tracking without excessive overhead or breaking flow.
 //!
 //! ## What's so special about prac?
-//! Not much, and that's on purpose, but there are a few key differences:
-//! - Rather than "events" being triggered by the clock/calendar, which are not privileged to your
-//!    psychological state, the proc lifecycle starts when the user gets stuck in their current task 
-//!    or otherwise decides it's time to do something new. This avoids flow-breaking interruptions 
-//!    while encoraging the user to become more in tune with their own needs and psychological rhythms.
+//! Not much, and that's on purpose, but in service of the above, proc has a few distinguishing
+//! design decisions.:
+//! - Rather than "events" being triggered by the clock/calendar, which are not privileged to
+//! user's psychological state, the proc lifecycle starts when the user gets stuck in their current task
+//!    or otherwise decides it's time to do something new. This avoids flow-breaking interruptions
+//!    while promoting mindfulness as an active part of the user's feedback loop.
 //! - Rather than on a scheduled interval, items run on time elapsed since prior log. E.g. a
 //! daily task period begins when you log it, and ends within 24 hours (plus a default 2-hr grace period).
-//!  Time does not displace your agency, rather time-since-last-log for each practice is displayed
-//! as a fraction of the period set for each. This information can be incorporated into the final decision entirely on the users terms. 
+//!  There is no scheduling to displace user agency, elapsed time since last log is displayed
+//! as a fraction of the period set for each practice. This information can be incorporated into the final decision entirely at the user's discretion.
 //! - Tracking is dead-simple, intentionally adding no functionality that is not possible with pen
 //! and paper. Time is tracked is a sum total of self-reported increments. Logging is done in plain-text.
 //!
@@ -52,13 +63,9 @@
 //! - With elapsed-time periods, an overrun is no big deal, nothing stacks up, just log it when you
 //! get to it and you'll start again with a full period.
 //! - You also are not "penalized" for overachieving / finishing early... just make sure you are working at a
-//! pace sustainable to finish within the next period which you have just moved forward. 
+//! pace sustainable to finish within the next period which you have just moved forward.
 //! - If you find yourself regularly finishing very early/late, no big deal! Just take it as a sign
 //! that you need to adjust the period of your feedback cycle!
-//!
-//!
-//!
-//! 
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use skim::prelude::*;
@@ -79,7 +86,7 @@ mod utils;
 use utils::TimeUnit;
 
 // TODO, config edit command
- /// Configuration state.
+/// Configuration state.
 #[derive(Serialize, Deserialize)]
 struct Config {
     grace_period: GracePeriod,
@@ -113,16 +120,16 @@ struct State {
 
 #[derive(Serialize, Deserialize)]
 struct Practice {
-   created: SystemTime,
+    created: SystemTime,
     // last time logged
-   logged: SystemTime,
+    logged: SystemTime,
     // how often you wish to repeat practice
-   period: Duration,
+    period: Duration,
     // unique id of practice, will be used for retrieval
-   name: String,
+    name: String,
     // take notes
-   notes: String,
-   cumulative: Duration,
+    notes: String,
+    cumulative: Duration,
     // TODO maybe a Completion struct? then a body enum {practice, Task} that contains Vec<Comepletion> for practice and raw
     // Completion for task. Trying not to prematurely optimize.
 }
@@ -194,16 +201,20 @@ impl State {
             Ok(path)
         } else if let Ok(practice_home) = var("PRAC_HOME") {
             let practice_home = PathBuf::from(practice_home);
-            std::fs::create_dir_all(&practice_home).context("$PRAC_HOME specified but could not be created.")?;
+            std::fs::create_dir_all(&practice_home)
+                .context("$PRAC_HOME specified but could not be created.")?;
             let path = practice_home.join("prac.json");
             Ok(path)
         } else if let Some(data_home) = dirs::data_dir() {
             let default_dir = data_home.join("prac");
-            std::fs::create_dir_all(&default_dir).with_context(|| format!("could not create {}", default_dir.display()))?;
+            std::fs::create_dir_all(&default_dir)
+                .with_context(|| format!("could not create {}", default_dir.display()))?;
             let path = default_dir.join("prac.json");
             Ok(path)
         } else {
-            let path = dirs::home_dir().context("could not find home directory")?.join(".prac.json");
+            let path = dirs::home_dir()
+                .context("could not find home directory")?
+                .join(".prac.json");
             Ok(path)
         }
     }
@@ -215,7 +226,6 @@ struct Cli {
     #[command(subcommand)]
     command: SubCommand,
 }
-
 
 // TODO: config edit command
 #[derive(Subcommand)]
@@ -235,10 +245,10 @@ enum SubCommand {
     Add {
         /// A (unique) name for the practice.
         name: String,
-        /// Some notes to outline goals and log progress. Opens $EDITOR if not provided.
+        /// Some notes to outline goals and log progress. Opens `$EDITOR` if not provided.
         #[arg(short, long)]
         notes: Option<String>,
-        /// Anticipated time period between practice sessions. (There is a 2 hr grace period by default.)
+        /// Anticipated time period between practice sessions (There is a 2 hr grace period by default)
         period: f64,
         #[arg(value_enum)]
         time_unit: TimeUnit,
@@ -265,7 +275,7 @@ enum SubCommand {
     Reset,
     /// Show state file location.
     ///
-    /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, [dirs::data_dir]/prac/prac.json 
+    /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, [dirs::data_dir]/prac/prac.json
     /// or [dirs::home_dir]/.prac.json, searched in that order.
     ///
     /// It's a good idea to vcs your state file.
@@ -289,7 +299,6 @@ enum SubCommand {
         new_name: String,
     },
 }
-
 
 fn main() -> Result<()> {
     let state_path = State::get_path()?;
@@ -317,10 +326,10 @@ fn main() -> Result<()> {
             time_unit: unit,
         } => {
             let notes = notes.unwrap_or_else(|| {
-                let placeholder = if state.routines.is_empty() { 
+                let placeholder = if state.routines.is_empty() {
                         Some("\
                             When you complete a practice, you should log it with `prac log`.\n\
-                            Come back to these practice notes and view this page later in your $EDITOR with `prac notes`. \n\
+                            Come back to these practice notes and view this page later in your `$EDITOR` with `prac notes`. \n\
                             When you get stuck, you can view all your practices (and how far along they are in their periods) with `prac list`.\n\
                             Delete this message and set some clear goals for your first practice!\
                             ".to_string())
@@ -355,7 +364,9 @@ fn main() -> Result<()> {
                 let body = utils::long_edit(Some(practice.notes.clone()))?;
                 practice.notes = body;
             } else {
-                println!("Good job! It's a good idea to make notes on your progress with `prac notes`.");
+                println!(
+                    "Good job! It's a good idea to make notes on your progress with `prac notes`."
+                );
             }
         }
         SubCommand::Notes { name } => {
@@ -371,9 +382,8 @@ fn main() -> Result<()> {
             // Confirm
             // TODO this is terrible
             let options = SkimOptionsBuilder::default().build().unwrap();
-            let items = SkimItemReader::default().of_bufread(Cursor::new(
-                [&confirm, "Abort"].join("\n")
-            ));
+            let items =
+                SkimItemReader::default().of_bufread(Cursor::new([&confirm, "Abort"].join("\n")));
 
             // TODO figure out what these errors acutally are
             let selected_items = Skim::run_with(&options, Some(items))
@@ -393,9 +403,8 @@ fn main() -> Result<()> {
                 return Ok(());
             } else {
                 practice.remove();
-                print !("Removed {}", name);
+                print!("Removed {}", name);
             }
-
         }
         SubCommand::List { cumulative, period } => {
             if state.routines.is_empty() {
@@ -408,8 +417,8 @@ fn main() -> Result<()> {
                 .map(|name| name.len())
                 .max()
                 .unwrap_or(0)
-                 .min(30); // TODO magic number
-             
+                .min(30); // TODO magic number
+
             let term_width = termsize::get().context("failed to obtain termsize")?.cols;
 
             println!();
