@@ -362,8 +362,7 @@ enum SubCommand {
     StateLocation,
     #[command(alias = "ep")]
     EditPeriod {
-        /// Specify, or leave blank to fuzzy search.
-        name: Option<String>,
+        name: String,
         /// Anticipated time period between practice sessions. (There is a 2 hr grace period by default.)
         period: f64,
         #[arg(value_enum)]
@@ -567,7 +566,7 @@ fn main() -> Result<()> {
             period,
             time_unit: unit,
         } => {
-            let mut find = state.find(name.as_deref())?;
+            let mut find = state.find(Some(&name))?;
             let practice = find.get_mut();
             let period = TimeUnit::to_duration(period, unit);
             practice.period = period;
