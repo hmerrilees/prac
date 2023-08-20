@@ -1,17 +1,18 @@
 # prac
-<!-- cargo-rdme start -->
+## Installation
+Install rust, clone repo, then...
 
-## a utility for a feedback-cycle conducive to immersive practice in a busy world
-
-### Installation
-install rust, clone repo, then
-```rust
+```
 cargo install --path <path to repo>
 prac help
 ```
-If this doesn't work, you may have yet to add `~/.cargo/bin` to your path.
 
-## UI demo + TLDR
+If this doesn't work, you may have yet to add `~/.cargo/bin` to your path.
+<!-- cargo-rdme start -->
+
+### The feedback-oriented utility for a practice-oriented life.
+
+#### UI demo + TLDR
 
 ```bash
 prac list
@@ -30,126 +31,51 @@ distributed systems programming ▬▬▬
 
 When I'm done, I'll ```prac log steno 2 hours``` to reset the bar and track time, and ```prac notes steno``` to make some notes w/ $EDITOR on my progress.
 
-
-In a state of immersion, time is experienced. In productivity systems, time is controlled--better had than spent, better
-spent than lost. What appears externally to be "lost" time is in fact the negative space prerquisite to immersive states.
-We have no business interrupting these states ourselves, but it remains that our immersive drive will eventually outlast 
-the focus it can find for any particular task--we get stuck. We require a mechanism to smoothly carry our momentum into the next state of practice.
-We need a subtle cue to reintroduce temporal awareness of our other practices
-in a manner not so jarring that it will rip us from our direct experience of the present moment.
-
-In contrast with other tools, in `prac`, the clock has no authority you do not yourself solicit. 
-It appears only as an intentionally simple, gentle visual indicator, leaning more on our [Graphical Perception](https://www.jstor.org/stable/2288400) than our numerically-obsessed scheduling proclivities.
-The progress bars for each item display time elapsed since last participation as a fraction the period in which we intend to practice.
-How you wish to systematize this is up to you, personally, I wouldn't even think about it. 
-Just look at it when you get stuck and need something else to do.
-
-If life happens, just `prac reset` to wipe the bars, and start again! It's no big deal.
-
-### What this isn't
-This is not a todo list, a calendar, pomodoro timer, a project manager, a scheduling app, or a habit tracker.
-
-Design decisions have been made on ideological grounds to intentionally maximize incompatibility with these types of apps.
-Neither is this a compliance mechanism, if you wish to Pavlov yourself into a life well lived,
-that is your prerogative, but I will not be helping you.
-
-I have attempted to make it as difficult as possible to use this tool to "make a project of
-oneself."
-
-### What this is
-A tool to augment a practice-driven life/workflow,
-specifically providing feedback to enable those practices
-which cannot all be done daily, or the efficacy of which is highly sensitive to factors
-knowable only in the moment.
-
-That REM sleep lifts us gracefully through from one phase of deep sleep to the next at an
-average period of ~90 minutes does not make possible reproduction of the effect by way of 
-a 90-minute alarm clock. This is the motivating philosophy of `prac`. 
-
-If you want, you can get started right now with `prac help`. If you want to see how I
-attempted to integrate the dream theory of flow state, read on to the minifesto.
-
-### Minifesto and user guide
-Begin by negatively scheduling, making time with guarantee only that you will not permit yourself to be otherwise scheduled or interrupted (including by phones/notifications).
-
-After having `prac add`-ed a few practices, you can `prac list` and choose one to _start_ on (how you choose is none of my
-business).
-
-This feedback loop orients on _starts_ rather than completions, banking on that (canonically) self-promising 
-to make it through the gym doors will be more successful to motivate a workout than a list of the entailed exercises. 
-Output, sharing, and interpersonal feedback are no less important than starts but happen to inhabit another segment of the loop, whereas this 
-tool limits its scope to the "refocusing" stage.
-
-In a conventional productivity system, interrupts are triggered externally, by calendar
-notifications, timers, due dates, etc. There are few ways in which these systems could be less accountable
-to the psychological state of the user in the relevant moment. The discipline of producing
-conventional productivity tools might as well be called "distraction engineering."
-
-Is genuine feedback even possible under a system where all the decisions are made ahead of
-time? When we are most efficient, it might not appear to us that we are making a decision at
-all, whether to continue or stop. Clearly then the problem is not implementation but orientation. 
-
-It's not about when you work, not everything is going to get done, you have X hours no matter what (and should probably limit yourself to even fewer), but more about when you switch between tasks.
-
-In a mode of practice, control is not exerted by the clock, but follows naturally from the
-persons instincts of relative flow and stuckness. When you get stuck, rather than banging your head until your pomodoro takes pity on your soul,
-you simply `prac list` to see a handful of practices with a progress bar showing how long
-it's been since you last practiced as a fraction of how frequently you wish to practice. This
-provides a very gentle way prioritize those practices that have been recently neglected.
-
-For those who struggle with work-life balance, these tasks can include things like rest, play, socializing, eating, outdoor time, family time, and other practices of self-care.
-
-This is a feedback tool, not a compliance tool. It's not a big deal if you let a bar run over, take it as a signal that the relavent period needs extending.
-If you find yourself regularly finishing early, you've identified that you would benefit from a shorter feedback cycle!
-
-I firmly believe that time and quality of practice are responsible for the bulk of actually-existing competence, and so
-I've implemented only two tracking features, `proc trac` for a bare total of time, and `prac notes` for plain text goal-setting and reflection.
-
-#### Can I have x feature to track something that I could just as easily track in the plain text notes?
-no.
-
-#### A rant on self-scheduling
-Ideologically, I despise self-scheduling. Spontaneity is in all things beautiful.
-Forgetfulness is spontaneity in the negative, no less an exercise of freedom. 
-Without scheduling we would have much less to forget, and for that I respect scheduling. 
-However, I have zero respect for self-scheduling. "Sorry, I can't [be a normal fun person]," says the self-scheduler, "I have to do this thing that nobody told me I had to and that I don't even want to do myself." 
-Neither is there spontaneous beauty in forgetting self-orders--you are back where you started except now also a failure. 
-When I "succeed" in perfectly following my elaborate self-scheduling, it means that I accomplished something so mundane that I had already totally understood it before I even began. 
-
-#### Incedental functionality
-I used clock periods instead of calendar periods to eliminate the incentive to start at the very beginning of the block (i.e. scheduling).
-Scheduling is not only is somewhat life-denying, also works against the resiliency of your system, as every moment is an opportunity to fail.
-It also fails to tolerate either end of a poorly selected period.
-- If the period is too short, iterations form a backlog, and in a state of overwhelm, it is easier to give up on the system.
-- If the perriod is too long, Having completed an iteration early in the calendar period, one gets the sense that they should
-wait until the next period to start again, artificially drawing out the period, making it very
-easy to fall out of habit and accidentally drop the system.
-
-When you have a daily todo list that also includes practices, it becomes basically impossible
-not to plan. Without scheduling is no mechanism to naturally encourage routine engagement in practices at
-the same within a calendar period.
-
-If all your daily tasks are clocked 24 (+ 2hr grace) periods, you are steered naturally towards doing
-things more or less at the same time you did them last. When you can keep up, your bar reminds
-you not to do something too late, and you know that if you do it too early you will be met with
-an early bar tomorrow too. If you can't keep up, it's no big deal, tomorrow's practice window will be
-adjusted automatically to when you were able to practice today.
-
-As a bottom-up feedback utility, and not a top-down compliance regieme, keeping
-with it becomes so much easier.
-
-#### Inspiration
-
-The initial name was "toDoom" as the interface was
-inspired by [The World's Most Dangerous Writing
-App](https://www.squibler.io/dangerous-writing-prompt-app/write?limit=5&type=minutes), and I
-intentionally hadn't handled progress bar overflow, resulting in a crash and arbitrary data loss. 
+##### Motivation
+Developing skill takes time + structure. prac attempts to promote both while being as lightweight as possible.
 
 
-### State management warning
+##### Solving the right problems.
+To remain lightweight, prac sticks only to problems that (to me) most obviously need solving:
+- "What should I do now?" in instances where pre-planning is inadviseable or impossible,
+- losing track of practices I haven't done in a while, and
+- progress and time tracking without excessive overhead or breaking flow.
 
-I would HIGHLY recommend backing up your state file (@`prac state-location`).
-State management is so far from stabilized, backwards compatibility is in no way guaranteed.
-As far as I'm concerned, your data may be lost at any time.
+##### What's so special about prac?
+Not much, and that's on purpose, but there are a few key differences:
+- Rather than "events" being triggered by the clock/calendar, which are not privileged to your
+   psychological state, the proc lifecycle starts when the user gets stuck in their current task 
+   or otherwise decides it's time to do something new. This avoids flow-breaking interruptions 
+   while encoraging the user to become more in tune with their own needs and psychological rhythms.
+- Rather than on a scheduled interval, items run on time elapsed since prior log. E.g. a
+daily task period begins when you log it, and ends within 24 hours (plus a default 2-hr grace period).
+ Time does not displace your agency, rather time-since-last-log for each practice is displayed
+as a fraction of the period set for each. This information can be incorporated into the final decision entirely on the users terms. 
+- Tracking is dead-simple, intentionally adding no functionality that is not possible with pen
+and paper. Time is tracked is a sum total of self-reported increments. Logging is done in plain-text.
+
+##### More benefits of elapsed-time periods
+- Scheduled/calendar intervals are intolerant to period drift either way. If you finish too
+late (i.e. need a longer feedback cycle), you find yourself having to work more quickly to
+catch up on the accumulated iterations. If you finish too early (i.e. need shorter feedback
+cycle), you have to wait even longer until the next scheduled event.
+- With elapsed-time periods, an overrun is no big deal, nothing stacks up, just log it when you
+get to it and you'll start again with a full period.
+- You also are not "penalized" for overachieving / finishing early... just make sure you are working at a
+pace sustainable to finish within the next period which you have just moved forward. 
+- If you find yourself regularly finishing very early/late, no big deal! Just take it as a sign
+that you need to adjust the period of your feedback cycle!
+
+
+
+
+#### Installation
+install rust, clone repo, then
+```rust
+cargo install --path <path to repo>
+prac help
+```
+If this doesn't work, you may have yet to add `~/.cargo/bin` to your path.
+
 
 <!-- cargo-rdme end -->
