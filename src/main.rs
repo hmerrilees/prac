@@ -37,13 +37,13 @@
 //! To remain lightweight, prac sticks only to problems that (to me) most obviously need solving.
 //!
 //! Primarily,
-//! - "what should I do now?" in instances where pre-planning is inadviseable or impossible,
+//! - "What should I do now?" in instances where pre-planning is inadviseable or impossible,
 //! - losing track of practices I haven't done in a while, and
 //! - progress/time tracking without excessive overhead or breaking flow.
 //!
 //! ## What's so special about prac?
 //! Not much, and that's on purpose, but in service of the above, proc has a few distinguishing
-//! design decisions.:
+//! design decisions:
 //! - Rather than "events" being triggered by the clock/calendar, which are not privileged to
 //! user's psychological state, the proc lifecycle starts when the user gets stuck in their current task
 //!    or otherwise decides it's time to do something new. This avoids flow-breaking interruptions
