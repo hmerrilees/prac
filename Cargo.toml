@@ -2,7 +2,7 @@
 name = "prac"
 authors = ["Henry Merrilees <henry@merrile.es>"]
 description = "a utility for a feedback-cycle conducive to immersive practice in a busy world"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/henry-merrilees/prac"
