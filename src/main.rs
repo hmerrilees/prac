@@ -4,8 +4,7 @@
 //! Let's say we'd like to set a new practice of making a weekly repo, well... every week.
 //! ```bash
 //! prac add "weekly repo" 1week
-//! ```
-//! Now, we can view "weekly repo" alongside all our practices.
+//! ``` Now, we can view "weekly repo" alongside all our practices.
 //! ```bash
 //! prac list
 //! ```
@@ -98,6 +97,8 @@
 //! block. In each block I can stop early but can't go back--somewhere between a standardized
 //! test and a "reverse pomodoro."
 //!
+//! Consider putting prac where you will see it. I have `prac list` in my shell prompt.
+//!
 //! ### More benefits of elapsed-time periods
 //! - Scheduled/calendar intervals are intolerant to period drift either way. If you finish too
 //! late (i.e. need a longer feedback cycle), you find yourself having to work more quickly to
@@ -109,14 +110,6 @@
 //! pace sustainable to finish within the next period which you have just moved forward.
 //! - If you find yourself regularly finishing very early/late, no big deal! Just take it as a sign
 //! that you need to adjust the period of your feedback cycle!
-//!
-//! ### Why a cli?
-//! - It's lightweight, harder to implement needless overhead.
-//! - It's generally distraction free... no notifications, no default swiping from app to app. You
-//! have to be sitting down at a computer to use it, etc. etc.
-//! - I spend most of my time in the terminal anyway.
-//! - In the long run, it should become easier to integrate into other workflows. I have `prac
-//! list` in my shell prompt.
 #![warn(
     clippy::all,
     clippy::pedantic,
