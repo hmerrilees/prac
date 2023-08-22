@@ -31,7 +31,8 @@ When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track ti
 Be sure to explore `prac help` and `prac help <subcommand>` for more.
 
 ### A note on time...
-Whenever you see a time argument, you can input time in a systemd.like format, ex.:
+In lieu of knowing better, I wrote a little duration parser (an approximate superset of systemd.time).
+Whenever you see a duration/time argument, you can input time as follows:
 ```text
 1day
 2days        # plural is fine
@@ -39,7 +40,8 @@ Whenever you see a time argument, you can input time in a systemd.like format, e
 1w4d         # abbreviations
 4M           # just be careful... M is month, m is minute
 ```
-Intermediate whitespace is permissible if whole string is surrounded in quotes so the cli can capture as single arg.
+Intermediate whitespace is permessible, but you still need quotes in the cli so as to be
+captured as a single argument.
 ```text
 "1Y 2M 3w 4d 5h 6m 7s"
 "1         day"
