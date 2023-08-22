@@ -86,6 +86,13 @@ as a fraction of the period set for each practice. This information can be incor
 - Tracking is dead-simple, intentionally adding no functionality that is not possible with pen
 and paper. Time is tracked is a sum total of self-reported increments. Logging is done in plain-text.
 
+- How you wish to use prac in a larger context is up to you. For practices that demand deeper
+focus, rather than worrying about them all the time, consider blocking off
+a regular 2-4 hour period in which you get settled, turn off all distractions hook
+in. Personally, I do four blocks of one hour with 15 minute breaks between, one practice per
+block. In each blocks I can stop early but can't go back--somewhere between an standardized
+test and a "reverse pomodoro."
+
 #### More benefits of elapsed-time periods
 - Scheduled/calendar intervals are intolerant to period drift either way. If you finish too
 late (i.e. need a longer feedback cycle), you find yourself having to work more quickly to
@@ -97,6 +104,14 @@ get to it and you'll start again with a full period.
 pace sustainable to finish within the next period which you have just moved forward.
 - If you find yourself regularly finishing very early/late, no big deal! Just take it as a sign
 that you need to adjust the period of your feedback cycle!
+
+#### Why a cli?
+- It's lightweight, harder to implement needless overhead.
+- It's generally distraction free... no notifications, no default swiping from app to app. You
+have to be sitting down at a computer to use it, etc. etc.
+- I spend most of my time in the terminal anyway.
+- In the long run, it should become easier to integrate into other workflows. I have `prac
+list` in my shell prompt.
 
 <!-- cargo-rdme end -->
 ## Installation
