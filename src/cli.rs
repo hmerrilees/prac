@@ -88,7 +88,7 @@ pub enum SubCommand {
         current_name: Option<String>,
     },
     /// Edit configuration. `help config` for info on fields.
-    #[command(after_help = "\
+    #[command(after_long_help = "\
         Grace period pads the end of the bars of `prac list` with some extra time to give you a little \
         flexibility and prevent tasks from creeping earlier on each iteration.")]
     Config,
