@@ -62,6 +62,7 @@ pub enum SubCommand {
     StateLocation,
     #[command(alias = "ep")]
     EditPeriod {
+        /// Specify name of practice whose period to edit
         name: String,
         /// Anticipated time period between practice sessions.
         #[arg(value_parser = parse_time_span)]
