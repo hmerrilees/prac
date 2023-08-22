@@ -30,7 +30,8 @@ pub struct Cli {
 pub enum SubCommand {
     /// List practices w/ progress bars showing time elapsed through period. `help list` for options
     #[command(
-        after_long_help = "-p -c together will display both, but each truncated to the largest unit"
+        after_long_help = "-p -c together will display both, but each truncated to the largest unit",
+        alias = "ls",
     )]
     List {
         /// Show cumulative hours tracked alongside practices.
