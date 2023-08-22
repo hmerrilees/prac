@@ -34,7 +34,7 @@ pub enum SubCommand {
     Add {
         /// A (unique) name for the practice.
         name: String,
-        /// Anticipated time period between practice sessions (as systemd.d.time-like time span).
+        /// Anticipated time period between practice sessions (as systemd.time-like time span).
         #[arg(value_parser = parse_time_span)]
         period: Option<Duration>,
         /// Shortcut to `prac notes` to set goals
@@ -46,13 +46,13 @@ pub enum SubCommand {
     Log {
         /// Specify practice to log, or leave blank to fuzzy search.
         name: Option<String>,
-        /// Time practiced, as systemd.d.time-like time span.
+        /// Time practiced, as systemd.time-like time span.
         #[arg(value_parser = parse_time_span, requires = "name")]
         time: Option<Duration>,
         /// An optional shortcut to `prac notes` when you're done.
         #[arg(short, long)]
         notes: bool,
-        /// Don't reset the bar after logging.
+        /// Don't reset the bar after logging, for when you just want to log time.
         #[arg(long)]
         no_reset: bool,
     },

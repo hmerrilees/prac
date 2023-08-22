@@ -91,8 +91,7 @@ impl Practice {
     /// Number of seconds elapsed since last practice
     fn elapsed(&self) -> Duration {
         let now = Utc::now();
-        let elapsed = now - self.logged;
-        elapsed
+        now - self.logged
     }
 }
 
@@ -270,8 +269,8 @@ impl StateExt for State {
             practice.logged = Utc::now();
         }
 
-        let time = if let Some(time) = time {
-            time
+        if let Some(time) = time {
+            practice.cumulative = practice.cumulative + time;
         } else {
             let time_input = dialoguer::Input::<String>::new()
                 .with_prompt(format!(
@@ -281,10 +280,9 @@ impl StateExt for State {
                 .allow_empty(false)
                 .interact()?;
 
-            super::time::parse_time_span(&time_input)?
-        };
-
-        practice.cumulative = practice.cumulative + time;
+            let time = super::time::parse_time_span(&time_input)?;
+            practice.cumulative = practice.cumulative + time;
+        }
 
         if add_notes {
             practice.notes = utils::long_edit(Some(&practice.notes))?;
