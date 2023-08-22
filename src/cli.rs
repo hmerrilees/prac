@@ -1,17 +1,3 @@
-//! How to use value hints and generate shell completions.
-//!
-//! Usage with zsh:
-//! ```console
-//! $ cargo run --example completion-derive -- --generate=zsh > /usr/local/share/zsh/site-functions/_completion_derive
-//! $ compinit
-//! $ ./target/debug/examples/completion_derive --<TAB>
-//! ```
-//! fish:
-//! ```console
-//! $ cargo run --example completion-derive -- --generate=fish > completion_derive.fish
-//! $ . ./completion_derive.fish
-//! $ ./target/debug/examples/completion_derive --<TAB>
-//! ```
 use super::time::parse_time_span;
 use chrono::Duration;
 use clap::{Parser, Subcommand};
