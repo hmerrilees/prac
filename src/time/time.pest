@@ -1,10 +1,12 @@
 time_span    = { span_element+ }
 span_element = { quantity ~ unit }
 quantity     = { ASCII_DIGIT+ }
+// todo consider also HH:MM:SS format
 
 // because greedy, month must proceed minute otherwise [1month] will parse as [1m]onth => 1 minute
 // It's very possible that there are other similar issues I wasn't able to find. Let me know if you find any.
 unit = { year | month | week | day | hour | second | millisecond | microsecond | nanosecond | minute }
+
 
 nanosecond  = { ^"nsec" | ^"ns" | ^"n" }
 microsecond = { ^"usec" | ^"us" | ^"u" }
