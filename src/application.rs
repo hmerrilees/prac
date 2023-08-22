@@ -215,16 +215,14 @@ impl StateExt for State {
         if add_notes {
             notes = utils::long_edit(Some(&notes))?;
         }
-        let new = Practice::new(name.clone(), notes, period);
-        self.practices.insert(new.name.clone(), new);
-
-        println!("Added practice `{name}`.");
-
+        let new = Practice::new(name, notes, period);
+        println!("Added practice {new}.");
         if !add_notes {
             println!(
-                "Before you get started, you should set some goals with `prac notes \"{name}\"`.\n"
+                "Before you get started, you should set some goals with `prac notes {new}`.\n"
             );
         }
+        self.practices.insert(new.name.clone(), new);
 
         Ok(())
     }
