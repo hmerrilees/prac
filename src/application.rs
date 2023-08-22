@@ -184,8 +184,9 @@ impl State {
 }
 
 /// See [``Cli::SubCommand``](crate::cli::SubCommand) for documentation.
+#[warn(clippy::print_stdout, clippy::print_stderr)]
 #[allow(clippy::missing_docs_in_private_items)]
-// TODO move option handling to main.rs
+// TODO move option hanlding, completely abstract interface from CLI
 pub trait StateExt {
     fn add(
         &mut self,
@@ -193,7 +194,13 @@ pub trait StateExt {
         period: Option<Duration>,
         add_notes: bool,
     ) -> anyhow::Result<()>;
-    fn log(&mut self, name: Option<String>, time: Option<Duration>, add_notes: bool) -> Result<()>;
+    fn log(
+        &mut self,
+        name: Option<String>,
+        time: Option<Duration>,
+        add_notes: bool,
+        no_reset: bool,
+    ) -> Result<()>;
     fn notes(&mut self, name: Option<String>) -> Result<()>;
     fn remove(&mut self, name: Option<String>) -> Result<()>;
     fn list(&self, cumulative: bool, period: bool, danger: bool) -> Result<()>;
@@ -250,10 +257,18 @@ impl StateExt for State {
 
         Ok(())
     }
-    fn log(&mut self, name: Option<String>, time: Option<Duration>, add_notes: bool) -> Result<()> {
+    fn log(
+        &mut self,
+        name: Option<String>,
+        time: Option<Duration>,
+        add_notes: bool,
+        no_reset: bool,
+    ) -> Result<()> {
         let mut find = self.find_mut(name.as_deref())?;
         let practice = find.get_mut();
-        practice.logged = Utc::now();
+        if !no_reset {
+            practice.logged = Utc::now();
+        }
 
         let time = if let Some(time) = time {
             time

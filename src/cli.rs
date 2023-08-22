@@ -52,6 +52,9 @@ pub enum SubCommand {
         /// An optional shortcut to `prac notes` when you're done.
         #[arg(short, long)]
         notes: bool,
+        /// Don't reset the bar after logging.
+        #[arg(long)]
+        no_reset: bool,
     },
     /// Edit practice notes. Each practice has its own notes file.
     Notes {
