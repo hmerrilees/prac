@@ -2,7 +2,7 @@
 name = "prac"
 authors = ["Henry Merrilees <henry@merrile.es>"]
 description = "The feedback-oriented utility for a practice-oriented life."
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/henry-merrilees/prac"
@@ -14,10 +14,15 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.72"
-clap = { version = "4.3.19", features = ["derive"] }
+chrono = { version = "0.4.26", features = ["serde"] }
+clap = { version = "4.3.19", features = ["derive", "color", "cargo"] }
 dialoguer = { version = "0.10.4", features = ["completion", "fuzzy-select"] }
 dirs = "5.0.1"
+itertools = "0.11.0"
+pest = { version = "2.7.2", features = ["pretty-print"] }
+pest_derive = "2.7.2"
 serde = { version = "1.0.178", features = ["derive"] }
 serde_json = "1.0.104"
+serde_with = { version = "3.3.0", features = ["chrono", "chrono_0_4"] }
 skim = "0.10.4"
 termsize = "0.1.6"

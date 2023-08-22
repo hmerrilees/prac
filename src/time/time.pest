@@ -1,0 +1,20 @@
+time_span    = { span_element+ }
+span_element = { quantity ~ unit }
+quantity     = { ASCII_DIGIT+ }
+
+// because greedy, month must proceed minute otherwise [1month] will parse as [1m]onth => 1 minute
+unit = { year | month | week | day | hour | second | millisecond | microsecond | nanosecond | minute }
+
+nanosecond  = { ^"nsec" | ^"ns" | ^"n" }
+microsecond = { ^"usec" | ^"us" | ^"u" }
+millisecond = { ^"msec" | "ms" }
+second      = { ^"seconds" | ^"second" | ^"sec" | ^"s" }
+minute      = { ^"minutes" | ^"minute" | ^"min" | "m" }
+hour        = { ^"hours" | ^"hour" | ^"hr" | ^"h" }
+day         = { ^"days" | ^"day" | ^"d" }
+week        = { ^"weeks" | ^"week" | ^"w" }
+month       = { ^"months" | ^"month" | "M" }
+year        = { ^"years" | ^"year" | ^"y" }
+
+WHITESPACE = _{ " " }
+

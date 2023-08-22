@@ -6,7 +6,7 @@
 ## UI demo + TLDR
 Let's say we'd like to set a new practice of making a weekly repo, well... every week.
 ```bash
-prac add "weekly repo" 1 week
+prac add "weekly repo" 1week
 ```
 Now, we can view "weekly repo" alongside all our practices.
 ```bash
@@ -24,13 +24,39 @@ distributed systems programming ▬▬▬
 
 Looks like I haven't done steno in a while... when I get stuck with whatever I'm doing, I'll switch to that.
 
-When I'm done, I'll ```prac log steno 30 minutes``` to reset the bar and track time, and ```prac notes steno``` to make some notes with `$EDITOR` on my progress.
+When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track time, and ```prac notes steno``` to make some notes with `$EDITOR` on my progress.
 
 (tip: use `prac list --cumulative` to see cumulative hours logged, are we 10000 yet?)
 
 Be sure to explore `prac help` and `prac help <subcommand>` for more.
 
-## Motivation, problem, and solution(?)
+### A note on time...
+Whenever you see a time argument, you can use a systemd.like time string, ex. as follows:
+show you some examples
+```text
+1day
+2days        # plural is fine
+3days15hours # combined quantities
+1w4d         # abbreviations
+4M           # just be careful... M is month, m is minute
+```
+Intermediate whitespace is permissible if whole string is surrounded in quotes so the cli can capture as single arg.
+```text
+"1Y 2M 3w 4d 5h 6m 7s"
+"1         day"
+"1day 30 min"
+```
+There are many ways to write the same unit, all the following are equivalent.
+```text
+2seconds
+2second
+2sec
+2s
+```
+See [src/time/time.pest](https://github.com/henry-merrilees/prac/blob/main/src/time/time.pest) for the complete grammar.
+Errors are decent enough to help you if you get stuck.
+
+## Motivation, problems, and a possible solution
 
 ### Motivation
 Developing skill takes time + structure. prac attempts to promote both while being as lightweight as possible.
