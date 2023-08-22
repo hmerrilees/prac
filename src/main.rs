@@ -83,11 +83,16 @@
 //! - Tracking is dead-simple, intentionally adding no functionality that is not possible with pen
 //! and paper. Time is tracked is a sum total of self-reported increments. Logging is done in plain-text.
 //!
-//! - How you wish to use prac in a larger context is up to you. For practices that demand deeper
-//! focus, rather than worrying about them all the time, consider blocking off
-//! a regular 2-4 hour period in which you get settled, turn off all distractions hook
-//! in. Personally, I do four blocks of one hour with 15 minute breaks between, one practice per
-//! block. In each blocks I can stop early but can't go back--somewhere between an standardized
+//! - How you wish to use prac in a larger context is up to you. For practices that demand more
+//! prolonged focus, rather than trying to cram them in wherever, consider blocking off
+//! a regular 2-4 hour period in which you get settled, turn off all distractions and hook
+//! in.
+//! - For shorter practices, in honor of Richard Hamming's three-minute-problems hour, though you
+//! are not a "machine," you may similarly restrict yourself to only those practices instead no longer than maybe 10 or 15 minutes.
+//! When those minutes are up, you move on--"no matter how much you had claimed you were practically finished" (_Art of Doing Science and Engineering_, pg. 369).
+//! - This time boxing can be useful to promote regularity on longer scales too. Personally,
+//! I do four blocks, each of one hour with 15 minute breaks between, one practice per
+//! block. In each block I can stop early but can't go back--somewhere between a standardized
 //! test and a "reverse pomodoro."
 //!
 //! ### More benefits of elapsed-time periods
