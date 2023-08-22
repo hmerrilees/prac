@@ -222,7 +222,7 @@ impl StateExt for State {
 
         if !add_notes {
             println!(
-                "Before you get started, you should set some goals with `prac notes {name}`. \n"
+                "Before you get started, you should set some goals with `prac notes \"{name}\"`.\n"
             );
         }
 
