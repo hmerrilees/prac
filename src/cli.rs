@@ -27,7 +27,7 @@ pub enum SubCommand {
         #[arg(short, long)]
         period: bool,
     },
-    /// Add a new practice: `help add <name> <period>`.
+    /// Add a new practice: `prac add <name> <period>`.
     Add {
         /// A (unique) name for the practice.
         name: String,
@@ -53,7 +53,7 @@ pub enum SubCommand {
     /// Reset all progress bars if you fall behind.
     /// Equivalent to tracking all practices w/ zero time.
     Reset,
-    /// Show state file location.
+    /// Show state file location. `help state-location` for more info.
     ///
     /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, [dirs::data_dir]/prac/prac.json
     /// or [dirs::home_dir]/.prac.json, searched in that order.
