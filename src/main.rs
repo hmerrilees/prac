@@ -122,7 +122,7 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
             period,
             notes: add_notes,
         } => state.add(name, period, add_notes)?,
-        SubCommand::Log { name, time, notes } => state.log(name, time, notes)?,
+        SubCommand::Log { notes } => state.log(notes)?,
         SubCommand::Notes { name } => state.notes(name)?,
         SubCommand::Reset => state.reset(),
         SubCommand::StateLocation => {

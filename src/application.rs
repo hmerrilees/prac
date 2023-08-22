@@ -185,7 +185,7 @@ impl State {
 #[allow(clippy::missing_docs_in_private_items)]
 pub trait StateExt {
     fn add(&mut self, name: String, period: Duration, add_notes: bool) -> anyhow::Result<()>;
-    fn log(&mut self, name: Option<String>, time: Duration, add_notes: bool) -> Result<()>;
+    fn log(&mut self, add_notes: bool) -> Result<()>;
     fn notes(&mut self, name: Option<String>) -> Result<()>;
     fn remove(&mut self, name: Option<String>) -> Result<()>;
     fn list(&self, cumulative: bool, period: bool) -> Result<()>;
@@ -226,10 +226,20 @@ impl StateExt for State {
 
         Ok(())
     }
-    fn log(&mut self, name: Option<String>, time: Duration, add_notes: bool) -> Result<()> {
-        let mut find = self.find_mut(name.as_deref())?;
+    fn log(&mut self, add_notes: bool) -> Result<()> {
+        let mut find = self.find_mut(None)?;
         let practice = find.get_mut();
         practice.logged = Utc::now();
+
+        let time_input = dialoguer::Input::<String>::new()
+            .with_prompt(format!(
+                "How long did you practice \"{practice}\" for?",
+                practice = practice.name
+            ))
+            .allow_empty(false)
+            .interact()?;
+
+        let time = super::time::parse_time_span(&time_input)?;
 
         practice.cumulative = practice.cumulative + time;
 

@@ -31,7 +31,7 @@ pub enum SubCommand {
     /// List practices w/ progress bars showing time elapsed through period. `help list` for options
     #[command(
         after_long_help = "-p -c together will display both, but each truncated to the largest unit",
-        alias = "ls",
+        alias = "ls"
     )]
     List {
         /// Show cumulative hours tracked alongside practices.
@@ -52,13 +52,9 @@ pub enum SubCommand {
         #[arg(short, long)]
         notes: bool,
     },
+    // todo, needs CLI only mode (issue is that it's difficult to manage 2 mutually dependant optionals)
     /// After you practice, `prac log <name> <time>` to reset the bar and track time.
     Log {
-        /// Specify, or leave blank to fuzzy search.
-        name: Option<String>,
-        /// How long you practiced for. This is added to the cumulative time displayed in `prac list --cumulative`.
-        #[arg(value_parser = parse_time_span)]
-        time: Duration,
         /// An optional shortcut to `prac notes` when you're done.
         #[arg(short, long)]
         notes: bool,
