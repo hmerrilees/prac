@@ -185,20 +185,31 @@ impl State {
 
 /// See [``Cli::SubCommand``](crate::cli::SubCommand) for documentation.
 #[allow(clippy::missing_docs_in_private_items)]
+// TODO move option handling to main.rs
 pub trait StateExt {
-    fn add(&mut self, name: String, period: Duration, add_notes: bool) -> anyhow::Result<()>;
-    fn log(&mut self, add_notes: bool) -> Result<()>;
+    fn add(
+        &mut self,
+        name: String,
+        period: Option<Duration>,
+        add_notes: bool,
+    ) -> anyhow::Result<()>;
+    fn log(&mut self, name: Option<String>, time: Option<Duration>, add_notes: bool) -> Result<()>;
     fn notes(&mut self, name: Option<String>) -> Result<()>;
     fn remove(&mut self, name: Option<String>) -> Result<()>;
     fn list(&self, cumulative: bool, period: bool) -> Result<()>;
     fn rename(&mut self, current_name: Option<String>) -> Result<()>;
     fn reset(&mut self);
-    fn edit_period(&mut self, name: String, new_period: Duration) -> Result<()>;
+    fn edit_period(&mut self, name: Option<String>, new_period: Option<Duration>) -> Result<()>;
     fn config(&mut self) -> Result<()>;
 }
 
 impl StateExt for State {
-    fn add(&mut self, name: String, period: Duration, add_notes: bool) -> anyhow::Result<()> {
+    fn add(
+        &mut self,
+        name: String,
+        period: Option<Duration>,
+        add_notes: bool,
+    ) -> anyhow::Result<()> {
         if self.practices.contains_key(&name) {
             bail!("Practice with name `{}` already exists.", &name);
         }
@@ -211,10 +222,23 @@ impl StateExt for State {
                     ");
         }
 
+        let period = if let Some(period) = period {
+            period
+        } else {
+            let input = dialoguer::Input::<String>::new()
+                            .with_prompt(format!(
+                                "How often do you want to practice \"{name}\"? (as systemd.time-like time span)",
+                            ))
+                            .allow_empty(false)
+                            .interact()?;
+            super::time::parse_time_span(&input)?
+        };
+
         let mut notes = format!("{name} notes:\n");
         if add_notes {
             notes = utils::long_edit(Some(&notes))?;
         }
+
         let new = Practice::new(name, notes, period);
         println!("Added practice {new}.");
         if !add_notes {
@@ -226,20 +250,24 @@ impl StateExt for State {
 
         Ok(())
     }
-    fn log(&mut self, add_notes: bool) -> Result<()> {
-        let mut find = self.find_mut(None)?;
+    fn log(&mut self, name: Option<String>, time: Option<Duration>, add_notes: bool) -> Result<()> {
+        let mut find = self.find_mut(name.as_deref())?;
         let practice = find.get_mut();
         practice.logged = Utc::now();
 
-        let time_input = dialoguer::Input::<String>::new()
-            .with_prompt(format!(
-                "How long did you practice \"{practice}\" for?",
-                practice = practice.name
-            ))
-            .allow_empty(false)
-            .interact()?;
+        let time = if let Some(time) = time {
+            time
+        } else {
+            let time_input = dialoguer::Input::<String>::new()
+                .with_prompt(format!(
+                    "How long did you practice \"{practice}\" for?",
+                    practice = practice.name
+                ))
+                .allow_empty(false)
+                .interact()?;
 
-        let time = super::time::parse_time_span(&time_input)?;
+            super::time::parse_time_span(&time_input)?
+        };
 
         practice.cumulative = practice.cumulative + time;
 
@@ -376,19 +404,35 @@ impl StateExt for State {
             practice.logged = Utc::now();
         }
     }
-    fn edit_period(&mut self, name: String, new_period: Duration) -> Result<()> {
-        let mut find = self.find_mut(Some(&name))?;
+    fn edit_period(&mut self, name: Option<String>, new_period: Option<Duration>) -> Result<()> {
+        let mut find = self.find_mut(name.as_deref())?;
         let practice = find.get_mut();
+
+        let new_period = if let Some(period) = new_period {
+            period
+        } else {
+            let input = dialoguer::Input::<String>::new()
+                .with_prompt(format!(
+                    "How often do you want to practice \"{}\"? (as systemd.time-like time span)",
+                    practice.name
+                ))
+                .allow_empty(false)
+                .interact()?;
+            super::time::parse_time_span(&input)?
+        };
 
         let old = FlatTime::from(practice.period).format();
         let new = FlatTime::from(new_period).format();
 
         if Confirm::new()
-            .with_prompt(format!("Change period of `{name}` from {old} to {new}?",))
+            .with_prompt(format!(
+                "Change period of \"{}\" from {old} to {new}?",
+                practice.name,
+            ))
             .interact()?
         {
             practice.period = new_period;
-            println!("Changed period of `{name}` to {new:?}.");
+            println!("Changed period of `{}` to {new}.", practice.name);
         }
         Ok(())
     }

@@ -31,9 +31,9 @@ pub enum SubCommand {
     Add {
         /// A (unique) name for the practice.
         name: String,
-        /// Anticipated time period between practice sessions
+        /// Anticipated time period between practice sessions (as systemd.d.time-like time span).
         #[arg(value_parser = parse_time_span)]
-        period: Duration,
+        period: Option<Duration>,
         /// Shortcut to `prac notes` to set goals
         #[arg(short, long)]
         notes: bool,
@@ -41,6 +41,11 @@ pub enum SubCommand {
     // todo, needs CLI only mode (issue is that it's difficult to manage 2 mutually dependant optionals)
     /// After you practice, `prac log` to track time practiced and reset the bar.
     Log {
+        /// Specify practice to log, or leave blank to fuzzy search.
+        name: Option<String>,
+        /// Time practiced, as systemd.d.time-like time span.
+        #[arg(value_parser = parse_time_span, requires = "name")]
+        time: Option<Duration>,
         /// An optional shortcut to `prac notes` when you're done.
         #[arg(short, long)]
         notes: bool,
@@ -63,10 +68,10 @@ pub enum SubCommand {
     #[command(alias = "ep")]
     EditPeriod {
         /// Specify name of practice whose period to edit
-        name: String,
+        name: Option<String>,
         /// Anticipated time period between practice sessions.
-        #[arg(value_parser = parse_time_span)]
-        period: Duration,
+        #[arg(value_parser = parse_time_span, requires = "name")]
+        period: Option<Duration>,
     },
     Remove {
         /// Specify name of practice to remove, or leave blank to fuzzy search.
