@@ -116,6 +116,10 @@ impl State {
         Self::default()
     }
 
+    pub fn update_version(&mut self) {
+        self.config.version = env!("CARGO_PKG_VERSION").to_owned();
+    }
+
     /// Find the name of a practice either validating an name input, or if not provided, prompting the user to select one.
     fn find_name(&self) -> Result<String> {
         let options = &self.practices.keys().collect::<Vec<_>>();
@@ -216,7 +220,7 @@ impl StateExt for State {
 
         if !add_notes {
             println!(
-                "Before you get started, you should set some goals with `prac notes {name}`. \n\""
+                "Before you get started, you should set some goals with `prac notes {name}`. \n"
             );
         }
 

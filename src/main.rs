@@ -153,6 +153,7 @@ fn main() -> Result<()> {
     process_subcommand(&mut state, cli.command, &state_path)?;
 
     let state_file = std::fs::File::create(state_path).context("failed to create state file")?;
+    state.update_version();
     serde_json::to_writer_pretty(BufWriter::new(state_file), &state)
         .context("failed to write state to file")?;
     Ok(())
