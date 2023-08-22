@@ -39,7 +39,7 @@ pub enum SubCommand {
         notes: bool,
     },
     // todo, needs CLI only mode (issue is that it's difficult to manage 2 mutually dependant optionals)
-    /// After you practice, `prac log <name> <time>` to reset the bar and track time.
+    /// After you practice, `prac log` to track time practiced and reset the bar.
     Log {
         /// An optional shortcut to `prac notes` when you're done.
         #[arg(short, long)]
