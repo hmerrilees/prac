@@ -1,3 +1,5 @@
+use crate::time::FlatTime;
+
 use super::utils;
 use chrono::{DateTime, Duration, Utc};
 use itertools::izip;
@@ -379,15 +381,16 @@ impl StateExt for State {
     fn edit_period(&mut self, name: String, new_period: Duration) -> Result<()> {
         let mut find = self.find_mut(Some(&name))?;
         let practice = find.get_mut();
+
+        let old = FlatTime::from(practice.period).format();
+        let new = FlatTime::from(new_period).format();
+
         if Confirm::new()
-            .with_prompt(format!(
-                "Change period of `{}` from {} to {}?",
-                name, practice.period, new_period,
-            ))
+            .with_prompt(format!("Change period of `{name}` from {old} to {new}?",))
             .interact()?
         {
             practice.period = new_period;
-            println!("Changed period of `{name}` to {new_period:?}.");
+            println!("Changed period of `{name}` to {new:?}.");
         }
         Ok(())
     }
