@@ -26,13 +26,12 @@ Looks like I haven't done steno in a while... when I get stuck with whatever I'm
 
 When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track time, and ```prac notes steno``` to make some notes with `$EDITOR` on my progress.
 
-(tip: use `prac list --cumulative` to see cumulative hours logged, are we 10000 yet?)
+(tip: use `prac list --cumulative` to see cumulative time logged, are we 10000h yet?)
 
 Be sure to explore `prac help` and `prac help <subcommand>` for more.
 
 ### A note on time...
-Whenever you see a time argument, you can use a systemd.like time string, ex. as follows:
-show you some examples
+Whenever you see a time argument, you can input time in a systemd.like format, ex.:
 ```text
 1day
 2days        # plural is fine
@@ -59,7 +58,7 @@ Errors are decent enough to help you if you get stuck.
 ## Motivation, problems, and a possible solution
 
 ### Motivation
-Developing skill takes time + structure. prac attempts to promote both while being as lightweight as possible.
+Developing skill takes time + structure. `prac` attempts to promote both while being as lightweight as possible.
 
 
 ### Solving the right problems
@@ -71,14 +70,15 @@ Primarily,
 - progress/time tracking without excessive overhead or breaking flow.
 
 ### What's so special about prac?
-Not much, and that's on purpose, but in service of the above, proc has a few distinguishing
+Not much, and that's on purpose, but in service of the above, prac has a few distinguishing
 design decisions:
 - Rather than "events" being triggered by the clock/calendar, which are not privileged to
-user's psychological state, the proc lifecycle starts when the user gets stuck in their current task
+user's psychological state, the prac lifecycle starts when the user gets stuck in their current task
    or otherwise decides it's time to do something new. This avoids flow-breaking interruptions
    while promoting mindfulness as an active part of the user's feedback loop.
-- Rather than on a scheduled interval, items run on time elapsed since prior log. E.g. a
-daily task period begins when you log it, and ends within 24 hours (plus a default 2-hr grace period).
+- Rather than on a scheduled (absolute) interval, items run on (relative) time elapsed since prior log. E.g. a
+daily task period begins when you log it, and ends within 24 hours (plus a grace period as
+specified in `prac config` to prevent forward creep).
  There is no scheduling to displace user agency, elapsed time since last log is displayed
 as a fraction of the period set for each practice. This information can be incorporated into the final decision entirely at the user's discretion.
 - Tracking is dead-simple, intentionally adding no functionality that is not possible with pen
