@@ -89,10 +89,10 @@ impl Practice {
     }
 
     /// Number of seconds elapsed since last practice
-    fn elapsed(&self) -> i64 {
+    fn elapsed(&self) -> Duration {
         let now = Utc::now();
         let elapsed = now - self.logged;
-        elapsed.num_seconds()
+        elapsed
     }
 }
 
@@ -196,7 +196,7 @@ pub trait StateExt {
     fn log(&mut self, name: Option<String>, time: Option<Duration>, add_notes: bool) -> Result<()>;
     fn notes(&mut self, name: Option<String>) -> Result<()>;
     fn remove(&mut self, name: Option<String>) -> Result<()>;
-    fn list(&self, cumulative: bool, period: bool) -> Result<()>;
+    fn list(&self, cumulative: bool, period: bool, danger: bool) -> Result<()>;
     fn rename(&mut self, current_name: Option<String>) -> Result<()>;
     fn reset(&mut self);
     fn edit_period(&mut self, name: Option<String>, new_period: Option<Duration>) -> Result<()>;
@@ -311,7 +311,10 @@ impl StateExt for State {
         }
         Ok(())
     }
-    fn list(&self, cumulative: bool, period: bool) -> Result<()> {
+    fn list(&self, cumulative: bool, period: bool, danger: bool) -> Result<()> {
+        // todo convert to return string, parameterize by term width, working towards generic
+        // interfae
+
         if self.practices.is_empty() {
             println!("You don't have any practices yet. Add some with `prac add`.");
             return Ok(());
@@ -370,13 +373,38 @@ impl StateExt for State {
         ) {
             let grace_adjusted_period = practice.period + self.config.user_config.grace_period;
             #[allow(clippy::cast_precision_loss)]
-            let fraction = practice.elapsed() as f64 / grace_adjusted_period.num_seconds() as f64;
+            let fraction = practice.elapsed().num_seconds() as f64
+                / grace_adjusted_period.num_seconds() as f64;
 
             let whole_bar = format!("{}{}{}", start, utils::bar(bar_width, fraction), end);
 
             println!("{whole_bar}");
         }
         println!();
+
+        if danger {
+            let sum_progress: i64 = self
+                .practices
+                .values()
+                .map(|p| p.elapsed().num_seconds())
+                .sum();
+            let sum_period: i64 = self
+                .practices
+                .values()
+                .map(|p| (p.period + self.config.user_config.grace_period).num_seconds())
+                .sum();
+
+            #[allow(clippy::cast_precision_loss)]
+            let sum_fraction = sum_progress as f64 / sum_period as f64;
+
+            // TODO make red
+            let sum_bar = utils::bar(bar_width, sum_fraction);
+            let start = format!("  {} ", "danger");
+            let end = String::new();
+
+            println!("{start:>max_start_len$}{sum_bar}{end:<max_end_len$}");
+        }
+
         Ok(())
     }
     fn rename(&mut self, current_name: Option<String>) -> Result<()> {

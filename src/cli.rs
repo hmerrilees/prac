@@ -26,6 +26,9 @@ pub enum SubCommand {
         /// Show period of practice alongside practices
         #[arg(short, long)]
         period: bool,
+        /// Show "danger bar" that dissplays sum progression through periods.
+        #[arg(short, long)]
+        danger: bool,
     },
     /// Add a new practice: `prac add <name> <period>`.
     Add {

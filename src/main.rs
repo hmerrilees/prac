@@ -116,7 +116,11 @@ use std::path::Path;
 
 fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Path) -> Result<()> {
     match subcommand {
-        SubCommand::List { cumulative, period } => state.list(cumulative, period)?,
+        SubCommand::List {
+            cumulative,
+            period,
+            danger,
+        } => state.list(cumulative, period, danger)?,
         SubCommand::Add {
             name,
             period,
