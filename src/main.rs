@@ -4,10 +4,12 @@
 //! Let's say we'd like to set a new practice of making a weekly repo, well... every week.
 //! ```bash
 //! prac add "weekly repo" 1week
-//! ``` Now, we can view "weekly repo" alongside all our practices.
+//! ```
+//! Now, we can view "weekly repo" alongside all our practices.
 //! ```bash
 //! prac list
 //! ```
+//!
 //! ```text
 //! distributed systems programming ▬▬▬
 //!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
