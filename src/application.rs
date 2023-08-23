@@ -12,7 +12,7 @@ use std::{collections::BTreeMap, env::var, path::PathBuf};
 
 use anyhow::{bail, ensure, Context, Result};
 
-use dialoguer::{Confirm, Editor, FuzzySelect, Input};
+use dialoguer::{Confirm, FuzzySelect, Input};
 
 /// User exposed (via [``SubCommand::config``](crate::cli::SubCommand::Config)) configuration.
 #[serde_as]
@@ -297,9 +297,7 @@ impl StateExt for State {
     fn notes(&mut self, name: Option<String>) -> Result<()> {
         let mut find = self.find_mut(name.as_deref())?;
         let practice = find.get_mut();
-        practice.notes = Editor::new()
-            .edit(&practice.notes)?
-            .context("Content not saved")?;
+        practice.notes = utils::long_edit(Some(&practice.notes))?;
         Ok(())
     }
     fn remove(&mut self, name: Option<String>) -> Result<()> {

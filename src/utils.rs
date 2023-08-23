@@ -1,9 +1,8 @@
 use anyhow::{Context, Result};
-use dialoguer::Editor;
 
 /// Write content to file
 pub fn long_edit(intitial_content: Option<&str>) -> Result<String> {
-    Editor::new()
+    dialoguer::Editor::new()
         .require_save(false)
         .edit(intitial_content.unwrap_or_default())?
         .context("Content not saved")

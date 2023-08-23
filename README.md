@@ -28,7 +28,11 @@ make a temporally-informed decision.
 
 Looks like I haven't done steno in a while... when I get stuck with whatever I'm doing, I'll switch to that.
 
-When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track time, and ```prac notes steno``` to record progress alongside other observations.
+When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track time.
+
+If you are comfortable using a terminal editor, you can record goals, progress, and whatever
+else with ```prac notes steno```. This opens $EDITOR, which usually defaults to vi. If this is
+all unfamiliar to you, it's probably best to leave this command alone.
 
 Tip: use `prac list --cumulative` to see cumulative time logged. (Are we 10000h yet?)
 

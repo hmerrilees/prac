@@ -56,7 +56,8 @@ pub enum SubCommand {
         #[arg(long)]
         no_reset: bool,
     },
-    /// Edit practice notes. Each practice has its own notes file.
+    /// Edit practice notes in your $EDITOR.
+    /// If you don't know vi or have your editor set otherwise, it's probably wise to leave this alone.
     Notes {
         /// Specify practice to edit, or leave blank to fuzzy search.
         name: Option<String>,
@@ -90,6 +91,7 @@ pub enum SubCommand {
     /// Edit configuration. `help config` for info on fields.
     #[command(after_long_help = "\
         Grace period pads the end of the bars of `prac list` with some extra time to give you a little \
-        flexibility and prevent tasks from creeping earlier on each iteration.")]
+        flexibility and prevent tasks from creeping earlier on each iteration.\n\n\
+        ")]
     Config,
 }

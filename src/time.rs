@@ -34,7 +34,12 @@ pub fn parse_time_span(string: &str) -> Result<Duration> {
 
     for element in span_elements {
         let mut element_pairs = element.into_inner();
-        let quantity = element_pairs.next().unwrap().as_str().parse::<i64>()?;
+        let quantity = element_pairs
+            .next()
+            .unwrap()
+            .as_str()
+            .trim()
+            .parse::<i64>()?;
         let unit = element_pairs.next().unwrap().into_inner().next().unwrap();
 
         let element_duration = match unit.as_rule() {
