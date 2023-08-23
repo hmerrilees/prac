@@ -24,7 +24,7 @@ distributed systems programming ▬▬▬
 > As time elapses through the weekly repo's period, the bar will fill like the rest.
 
 When you get stuck or otherwise need to (re)start something new, we can look at the list to
-make a temporally informed decision.
+make a temporally-informed decision.
 
 Looks like I haven't done steno in a while... when I get stuck with whatever I'm doing, I'll switch to that.
 
@@ -32,7 +32,7 @@ When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track ti
 
 Tip: use `prac list --cumulative` to see cumulative time logged. (Are we 10000h yet?)
 
-Be sure to explore `prac help` and `prac help <subcommand>` for more.
+For a list of all subcommands, see `prac help`. For help on each, `prac help <subcommand>`.
 
 ### A note on time...
 In lieu of knowing better, I wrote a little duration parser (an approximate superset of systemd.time).
