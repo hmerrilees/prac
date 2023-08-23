@@ -5,7 +5,7 @@
 //! ```bash
 //! prac add "weekly repo" 1week
 //! ```
-//! Now, we can view "weekly repo" alongside all our practices.
+//! We can now list practices and their progression through their respective periods.
 //! ```bash
 //! prac list
 //! ```
@@ -20,11 +20,14 @@
 //! ```
 //! > As time elapses through the weekly repo's period, the bar will fill like the rest.
 //!
+//! When you get stuck or otherwise need to (re)start something new, we can look at the list to
+//! make a temporally informed decision.
+//!
 //! Looks like I haven't done steno in a while... when I get stuck with whatever I'm doing, I'll switch to that.
 //!
-//! When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track time, and ```prac notes steno``` to make some notes with `$EDITOR` on my progress.
+//! When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track time, and ```prac notes steno``` to record progress alongside other observations.
 //!
-//! (tip: use `prac list --cumulative` to see cumulative time logged, are we 10000h yet?)
+//! Tip: use `prac list --cumulative` to see cumulative time logged. (Are we 10000h yet?)
 //!
 //! Be sure to explore `prac help` and `prac help <subcommand>` for more.
 //!
