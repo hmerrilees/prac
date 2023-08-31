@@ -11,7 +11,6 @@ pub struct Cli {
     pub(super) command: SubCommand,
 }
 
-// TODO: config edit command
 #[derive(Subcommand, Debug)]
 pub enum SubCommand {
     /// List practices w/ progress bars showing time elapsed through period. `help list` for options
@@ -42,7 +41,6 @@ pub enum SubCommand {
         #[arg(short, long, default_value = "false")]
         interactive: bool,
     },
-    // todo, needs CLI only mode (issue is that it's difficult to manage 2 mutually dependant optionals)
     /// After you practice, `prac log` to track time practiced and reset the bar.
     Log {
         /// Specify practice to log, or leave blank to fuzzy search.
