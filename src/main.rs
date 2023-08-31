@@ -134,42 +134,178 @@ mod cli;
 mod time;
 mod utils;
 
-use anyhow::{Context, Result};
-use application::{State, StateExt};
+use anyhow::{bail, Context, Result};
+use application::{handle_transition, State, StateTransition};
 use clap::Parser;
 use cli::{Cli, SubCommand};
 use std::io::BufWriter;
 use std::path::Path;
 
+fn get_time_span_interactive(msg: &str) -> Result<chrono::Duration> {
+    let time_input = dialoguer::Input::<String>::new()
+        .with_prompt(msg)
+        .allow_empty(false)
+        .interact()?;
+    time::parse_time_span(&time_input)
+}
+
+#[allow(clippy::too_many_lines)]
 fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Path) -> Result<()> {
-    match subcommand {
+    // TODO transition generation doesn't require &mut, this should be enforced somehow
+    // TODO allow manual field specifications alongside interactive
+    let transition = match subcommand {
         SubCommand::List {
             cumulative,
             period,
             danger,
-        } => state.list(cumulative, period, danger)?,
+        } => {
+            state.list(cumulative, period, danger)?;
+            return Ok(());
+        }
         SubCommand::Add {
             name,
             period,
-            notes: add_notes,
-        } => state.add(name, period, add_notes)?,
+            interactive,
+        } => {
+            let name = if interactive {
+                dialoguer::Input::<String>::new()
+                    .with_prompt("What would you like to practice?")
+                    .allow_empty(false)
+                    .interact()?
+            } else {
+                name.context("no practice name provided")?
+            };
+            let msg = format!(
+                "How often (not how long) would you like to practice \"{}?\"",
+                name
+            );
+            let period = if interactive {
+                get_time_span_interactive(&msg)?
+            } else {
+                period.context("no period provided")?
+            };
+            StateTransition::Add { name, period }
+        }
         SubCommand::Log {
             name,
             time,
-            notes: add_notes,
-            no_reset,
-        } => state.log(name, time, add_notes, no_reset)?,
-        SubCommand::Notes { name } => state.notes(name)?,
-        SubCommand::Reset => state.reset(),
-        SubCommand::StateLocation => {
-            println!("state path: `{}`", state_path.display());
+            interactive,
+        } => {
+            let name = if interactive {
+                state.find_name()?.to_owned()
+            } else {
+                name.context("no practice name provided")?
+            };
+            let msg = format!("How long did you practice \"{name}?\"");
+            let time = if interactive {
+                get_time_span_interactive(&msg)?
+            } else {
+                time.context("no time provided")?
+            };
+            StateTransition::Log { name, time }
         }
-        SubCommand::EditPeriod { name, period } => state.edit_period(name, period)?,
-        SubCommand::Remove { name } => state.remove(name)?,
-        SubCommand::Rename { current_name } => state.rename(current_name)?,
-        SubCommand::Config => state.config()?,
+        SubCommand::Notes {
+            name,
+            new_notes,
+            interactive,
+        } => {
+            let name = if interactive {
+                state.find_name()?.to_owned()
+            } else {
+                name.context("no practice name provided")?
+            };
+            let notes = if interactive {
+                let old_notes = state.get_notes(&name)?;
+                utils::long_edit(Some(old_notes))?
+            } else {
+                new_notes.context("no notes provided")?
+            };
+            StateTransition::Notes { name, notes }
+        }
+        SubCommand::Reset => StateTransition::Reset,
+        SubCommand::StateLocation => {
+            println!("State path: {}", state_path.display());
+            return Ok(());
+        }
+        SubCommand::EditPeriod {
+            name,
+            period,
+            interactive,
+        } => {
+            let name = if interactive {
+                state.find_name()?.to_owned()
+            } else {
+                name.context("no practice name provided")?
+            };
+            let msg = format!("How often (not how long) would you like to practice \"{name}?\"");
+            let new_period = if interactive {
+                get_time_span_interactive(&msg)?
+            } else {
+                period.context("no period provided")?
+            };
+            let display_period = time::FlatTime::from(new_period).format();
+            if !dialoguer::Confirm::new()
+                .with_prompt(format!("Change period of \"{name}\" to {display_period}?",))
+                .interact()?
+            {
+                bail!("aborted")
+            }
+            StateTransition::EditPeriod { name, new_period }
+        }
+        SubCommand::Remove { name, interactive } => {
+            let name = if interactive {
+                state.find_name()?.to_owned()
+            } else {
+                name.context("no practice name provided")?
+            };
+            if !dialoguer::Confirm::new()
+                .with_prompt(format!("Remove practice \"{name}?\"",))
+                .interact()?
+            {
+                bail!("aborted")
+            }
+            StateTransition::Remove { name }
+        }
+        SubCommand::Rename {
+            current_name,
+            new_name,
+            interactive,
+        } => {
+            let current_name = if interactive {
+                state.find_name()?.to_owned()
+            } else {
+                current_name.context("no current practice name provided")?
+            };
+            let new_name = if interactive {
+                state.find_name()?.to_owned()
+            } else {
+                new_name.context("no new practice name provided")?
+            };
+            StateTransition::Rename {
+                current_name,
+                new_name,
+            }
+        }
+        SubCommand::Config {
+            grace_period,
+            interactive,
+        } => {
+            let mut new_config = *state.get_user_config(); // TODO, this can't be right
+            if interactive {
+                // If interactive, we can either confirm on each non-provided field or "" for leave same
+                unimplemented!();
+            } else {
+                // else, only update provided fields
+                if let Some(grace_period) = grace_period {
+                    new_config.grace_period = grace_period;
+                }
+            }
+
+            StateTransition::Config { new_config }
+        }
     };
-    Ok(())
+
+    handle_transition(state, transition)
 }
 
 fn main() -> Result<()> {
@@ -180,7 +316,7 @@ fn main() -> Result<()> {
             &std::fs::read_to_string(&state_path).context("could not read statefile")?,
         )
         .with_context(|| format!("failed to parse state at \"{}\".\n\
-        Until automated state upgrading is implemented, you will either have to satisfy the parser's demands, or start with a new statefile.\
+        Until automated state upgrading is implemented, you will either have to satisfy the parser's demands, or start with a new statefile. \
         Be sure to save though.", state_path.display()))?
     } else {
         State::new()

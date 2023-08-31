@@ -27,40 +27,45 @@ pub enum SubCommand {
         #[arg(short, long)]
         period: bool,
         /// Show "danger bar" that dissplays sum progression through periods.
-        #[arg(short, long)]
+        #[arg(short, long, default_value = "false")]
         danger: bool,
     },
     /// Add a new practice: `prac add <name> <period>`.
     Add {
         /// A (unique) name for the practice.
-        name: String,
+        #[arg(required_unless_present = "interactive")]
+        name: Option<String>,
         /// Anticipated time period between practice sessions (as systemd.time-like time span).
-        #[arg(value_parser = parse_time_span)]
+        #[arg(value_parser = parse_time_span, required_unless_present = "interactive")]
         period: Option<Duration>,
-        /// Shortcut to `prac notes` to set goals
-        #[arg(short, long)]
-        notes: bool,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
     },
     // todo, needs CLI only mode (issue is that it's difficult to manage 2 mutually dependant optionals)
     /// After you practice, `prac log` to track time practiced and reset the bar.
     Log {
         /// Specify practice to log, or leave blank to fuzzy search.
+        #[arg(required_unless_present = "interactive")]
         name: Option<String>,
         /// Time practiced, as systemd.time-like time span.
-        #[arg(value_parser = parse_time_span, requires = "name")]
+        #[arg(value_parser = parse_time_span, requires = "name", required_unless_present = "interactive")]
         time: Option<Duration>,
-        /// An optional shortcut to `prac notes` when you're done.
-        #[arg(short, long)]
-        notes: bool,
-        /// Don't reset the bar after logging, for when you just want to log time.
-        #[arg(long)]
-        no_reset: bool,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
     },
     /// Edit practice notes in your $EDITOR.
     /// If you don't know vi or have your editor set otherwise, it's probably wise to leave this alone.
     Notes {
         /// Specify practice to edit, or leave blank to fuzzy search.
+        #[arg(required_unless_present = "interactive")]
         name: Option<String>,
+        #[arg(required_unless_present = "interactive")]
+        new_notes: Option<String>,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
     },
     /// Reset all progress bars if you fall behind.
     /// Equivalent to tracking all practices w/ zero time.
@@ -75,23 +80,45 @@ pub enum SubCommand {
     #[command(alias = "ep")]
     EditPeriod {
         /// Specify name of practice whose period to edit
+        #[arg(required_unless_present = "interactive")]
         name: Option<String>,
         /// Anticipated time period between practice sessions.
-        #[arg(value_parser = parse_time_span, requires = "name")]
+        #[arg(value_parser = parse_time_span, required_unless_present = "interactive")]
         period: Option<Duration>,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
     },
     Remove {
         /// Specify name of practice to remove, or leave blank to fuzzy search.
+        #[arg(required_unless_present = "interactive")]
         name: Option<String>,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
     },
     Rename {
         /// Current (old) name of practice.
+        #[arg(required_unless_present = "interactive")]
         current_name: Option<String>,
+        /// New name of practice.
+        #[arg(required_unless_present = "interactive")]
+        new_name: Option<String>,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
     },
     /// Edit configuration. `help config` for info on fields.
     #[command(after_long_help = "\
         Grace period pads the end of the bars of `prac list` with some extra time to give you a little \
         flexibility and prevent tasks from creeping earlier on each iteration.\n\n\
         ")]
-    Config,
+    Config {
+        /// Grace period
+        #[arg(short, long, value_parser = parse_time_span, required_unless_present = "interactive")]
+        grace_period: Option<Duration>,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
+    },
 }
