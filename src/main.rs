@@ -40,7 +40,7 @@
 //! Before doing anything else, first you need to add practices, with what else but `prac add'. I would
 //! recommend doing this interactively with `prac add -i'
 //!
-//! ```
+//! ```text
 //!  ♥  prac add -i
 //!   What would you like to practice?: discrete mathematics (algorithms)
 //!   How often (not how long) would you like to practice "discrete mathematics (algorithms)?": 1week 3days
