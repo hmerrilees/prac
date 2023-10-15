@@ -165,8 +165,8 @@
 //! 1w4d         # abbreviations
 //! 4M           # just be careful... M is month, m is minute
 //! ```
-//! Intermediate whitespace is permessible, but you still need quotes in the cli so as to be
-//! captured as a single argument.
+//! Intermediate whitespace is permessible, but you still need quotes in the cli (outside of
+//! interactive mode) so as to be captured as a single argument.
 //! ```text
 //! "1Y 2M 3w 4d 5h 6m 7s"
 //! "1         day"
