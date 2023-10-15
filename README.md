@@ -120,8 +120,7 @@ else with `prac notes`. This opens ``$EDITOR``, which often defaults to vi. If t
 all unfamiliar to you, it's probably best to leave this command alone.
 
 ## Design
-### Why time periods? Why not absolute calendar windows within which the activity could be freely
-participated?
+### Why time periods? Why not absolute calendar windows within which the activity could be freely participated?
 
 Absolute windows of time are ideal for establishing a set mean completion interval (as one
 would hope for when administering medication). Rather than independently specifying a schedule and
