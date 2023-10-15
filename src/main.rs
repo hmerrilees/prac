@@ -2,7 +2,8 @@
 //!
 //! # TL:DR;
 //! Awww, the minifesto is not *that* insufferable, I assure you! But if you're really that lazy,
-//! just run `prac help`, and `prac help <subcommand>`. The help is fairly complete.
+//! just run `prac help`, and `prac help <subcommand>`. The help is fairly complete. Applicable
+//! subcommands have `-i` flag for interactive mode, highly recommended.
 //!
 //! I'd start with `prac add -i` (interactive), then `prac session -i` to start a practice session, then `prac list` to pick what to do next. 
 //! Just remember, you are specifying a time period, not duration--this is the difference between running 
