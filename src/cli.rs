@@ -41,6 +41,17 @@ pub enum SubCommand {
         #[arg(short, long, default_value = "false")]
         interactive: bool,
     },
+    Session {
+        /// Specify practice to log, or leave blank to fuzzy search.
+        #[arg(required_unless_present = "interactive")]
+        name: Option<String>,
+        /// Time practiced, as systemd.time-like time span.
+        #[arg(value_parser = parse_time_span, requires = "name", required_unless_present = "interactive")]
+        max_time: Option<Duration>,
+        /// Interactive
+        #[arg(short, long, default_value = "false")]
+        interactive: bool,
+    },
     /// After you practice, `prac log` to track time practiced and reset the bar.
     Log {
         /// Specify practice to log, or leave blank to fuzzy search.

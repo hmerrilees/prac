@@ -1,41 +1,161 @@
 //! # The feedback-oriented utility for a practice-oriented life.
 //!
-//! # UI demo + TLDR
-//! Let's say we'd like to set a new practice of making a weekly repo, well... every week.
-//! ```bash
-//! prac add "weekly repo" 1week
+//! # TL:DR;
+//! Awww, the minifesto is not *that* insufferable, I assure you! But if you're really that lazy,
+//! just run `prac help`, and `prac help <subcommand>`. The help is fairly complete.
+//!
+//! I'd start with `prac add -i` (interactive), then `prac session -i` to start a practice session, then `prac list` to pick what to do next. 
+//! Just remember, you are specifying a time period, not duration--this is the difference between running 
+//! a 30-minute 5k once a month and running a 5k every 30 minutes. I know which I'd prefer.
+//!
+//! Most of the utility of this tool is not in the functionality but in the approach, so I would
+//! recommend reading on.
+//!
+//! # Minifesto
+//! ### problem 
+//! You have high-level values which should materialize in certain regular practices that
+//! reflect your life-intentions. Modern life is busy, and given that we have well-armed trivial things 
+//! with calendars, todo lists, pomodoro timers, etc. to conquer our natural motivations,
+//! it is no surprise that such things regularly displace our practices, and in doing so, our values.
+//!
+//! We need a system to set our life-practices on equal footing with our extrinsically-motivated
+//! activity, even if only to give us in the business of life a conventent excuse to abide by our values.
+//! We need a tool to save us from our tools.
+//!
+//! ### existing (un)solutions
+//! Existing productivity tools are actively hostile to the uninterruptabile nature of valuable practice.
+//! We have come to accept a certain shallowness in our work. We tolerate the disruptive
+//! mechanisms of our productivity tools as it is not clear exactly what of value they are
+//! disrupting. Our life-practices are not advantaged by unimportance in this way.
+//!
+//! Additionally, humans have not always required these tools. There existed ritual kindness long before the calendar.
+//! When supplementing our practices with technology, we should ensure that every aspect is
+//! genuinely additive. Knowing what focus has been lost to notifications, our system should only
+//! look to the clock when it is clear that it has something of value to say. We know far
+//! better ourselves when it is time to move on.
+//!
+//! ### method
+//!
+//! Before doing anything else, first you need to add practices, with what else but `prac add'. I would
+//! recommend doing this interactively with `prac add -i'
+//!
 //! ```
-//! We can now list practices and their progression through their respective periods.
-//! ```bash
-//! prac list
+//!  ♥  prac add -i
+//!   What would you like to practice?: discrete mathematics (algorithms)
+//!   How often (not how long) would you like to practice "discrete mathematics (algorithms)?": 1week 3days
 //! ```
 //!
+//! W/r/t practice, your calendar has one useful purpose--to fight fire with fire. To stop yourself
+//! and others from scheduling over your values, you can block our explicit time to practice. You
+//! shut off all your non-emergency notifications. Now what?
+//!
+//! Since scheduling technology has done so much to put distance between ourselves and the last
+//! occurences of our practice, the least the clock can do is tell us how long it's been since
+//! each. This is `prac list`.
+//!
+//! Numbers are of limited use for time except when scheduling, and humans are really bad with them
+//! anyways, so `prac list` displays time elapsed only as a visual cue--as a fraction of the period we have
+//! specified as how often we wish to participate in the activity.
+//! ```bash
+//! ♥  prac list
+//! ```
 //! ```text
-//! distributed systems programming ▬▬▬
-//!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                     kierkegaard ▬▬▬▬▬▬▬
-//!                           steno ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                     weekly repo
+//!           communicate gratitude ▬▬▬▬▬▬▬▬▬▬▬
+//! distributed systems programming ▬
+//!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                     kierkegaard ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                           steno ▬▬▬▬▬
 //! ```
-//! > As time elapses through the weekly repo's period, the bar will fill like the rest.
+//! Nice, we're on top of distributed systems programming! However, it looks like we haven't done steno in a while, maybe we should start with that.
 //!
-//! When you get stuck or otherwise need to (re)start something new, we can look at the list to
-//! make a temporally-informed decision.
+//! > Hint: configure your shell config to `prac list` on first prompt to be reminded of your priorities!
 //!
-//! Looks like I haven't done steno in a while... when I get stuck with whatever I'm doing, I'll switch to that.
+//! To begin a session of a particular task, we use `prac session...`. I recommended `prac session -i` for interactive mode. We also should specify how long we'd like to practice for.
+//! ```bash
+//! ♥  prac session steno 2h
+//! ```
+//! Prac will then keep an eye on how long it's been. Optionally, using a terminal with job-completion
+//! notifications to ping you after the desired participation duration has elapsed.
 //!
-//! When I'm done, I'll ```prac log steno 30minutes``` to reset the bar and track time.
 //!
-//! If you are comfortable using a terminal editor, you can record goals, progress, and whatever
-//! else with ```prac notes```. This opens ``$EDITOR``, which usually defaults to vi. If this is
+//!
+//! You keep going either until the end of the specified duration or you get stuck--whichever
+//! comes first, there's no point stressing. Simply `prac list` again
+//! ```text
+//!           communicate gratitude ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//! distributed systems programming ▬▬▬▬
+//!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+//!                     kierkegaard 
+//!                           steno ▬▬▬▬▬▬▬▬
+//! ```
+//!
+//! We see that the bars progress with time, and also that `kierkegaard` has conveniently reset, marking
+//! our participation. We see that exercise is the furthest away, but maybe Keirkegaard has
+//! inspired us with gratitude, so we will communicate gratitude next. The point is that `prac`
+//! presents *you* with information that you wouldn't otherwise have, so that *you* may make the
+//! best decision on your own accord. If I wanted to tell you simply to do the most "overdue" task, I
+//! would have done it. That interface would have been a lot easier.
+//!
+//! > Hint: consider, in addition to longer blocks, scheduling a dedicated "prac storm" of 1-2
+//! hours, in which practices are attempted only if they may be reasonably kept under 10-15 minutes.
+//! Then hold yourself to it.
+//!
+//! If you are a reflective person, `prac list --cumulative` also shows you how much time you have
+//! given total to each item, enabling you to take pride in your work, and to adjust your
+//! priorities to best suit your values.
+//!
+//! If you find the bar of a task regularly running to the end of the window or that it never makes it
+//! close, you can adjust the period with `prac edit-period -i` (interactive). 
+//!
+//! The `-d` flag on `prac list -d` adds a "danger bar" which is a weighted sum display of all
+//! practice periods. You should consider set your periods to where it is achievable to keep the
+//! danger bar under halfway-full.
+//!
+//! If you are comfortable using a terminal editor, you should record goals, progress, and whatever
+//! else with `prac notes`. This opens ``$EDITOR``, which often defaults to vi. If this is
 //! all unfamiliar to you, it's probably best to leave this command alone.
 //!
-//! Tip: use `prac list --cumulative` to see cumulative time logged. (Are we 10000h yet?)
+//! # Design
+//! ## Why time periods? Why not absolute calendar windows within which the activity could be freely
+//! participated?
 //!
-//! For a list of all subcommands, see `prac help`. For help on each, `prac help <subcommand>`.
+//! Absolute windows of time are ideal for establishing a set mean completion interval (as one
+//! would hope for when administering medication). Rather than independently specifying a schedule and
+//! forcing our life to conform to the gaps, we are more concerned with *doing* what it is we set
+//! out to do (with minimally-invasive guardrails), and merely observing what timing falls into place.
 //!
-//! ## A note on time...
+//! With absolute calendar periods, the next participation doesn't become any easier because the 
+//! last was done later, despite that we will have less time to do it. For that which we are particularly
+//! excited, we shouldn't have to wait for the next window either. If we missed last period, should we make it up? 
+//! All these considerations make it very easy to break with and give up on a system based on
+//! absolute calendar periods.
+//!
+//! A period beginning from last participation is natural for our purpose, as the last participation is the event to which the next will be most sensitive.
+//! It's okay to regularly be ahead of "schedule," and even to be occasionally behind.
+//! *That we continually participate early or late in the period is only a indication that we should edit the period accordingly.*
+//!
+//! If you get way behind on everything, no need to give up, just `prac reset` to start again with
+//! a clean slate. Prac is intentionally designed to avoid any derailing events.
+//!
+//! Nominally an alternative to routine-scheduling systems, *prac is secretly a routine-discovery system.* 
+//! Daily practices will near the end of their period at a similar time as they were completed the
+//! previous day, motivating users naturally to fall into a rhythm. The same applies on any other
+//! calendar-aligned period. Additionally, prac has a configurable grace period to enable emergent routines
+//! not to creep earlier and earlier.
+//!
+//! Finally, having windows at all entails scheduling. At a macro level, this is not necessarily
+//! harmful so long as you never make any impossible schedule. I am of the belief that daily,
+//! weekly, quarterly, etc. organizational allotments are better spent reflecting than planning,
+//! but the overhead seems to be manageable (if not enjoyable) for some. However, with the "aid" of software,
+//! you can subject yourself daily to an procedurally-generated list of tasks with complexity far in
+//! excess of that which you could ever manage to produce in your head, or even with pen and paper.
+//! To fit them all in, your only option is micro-scheduling the day, which both requires interrupts and 
+//! is completely insensitive to what activity one feels in the moment most suited to practice intently. 
+//! An impossible schedule is virtually inevitable. Enabling this would defeat the entire purpose of prac.
+//!
+//! ## Period syntax
 //! In lieu of knowing better, I wrote a little duration parser (an approximate superset of systemd.time).
 //! Whenever you see a duration/time argument, you can input time as follows:
 //! ```text
@@ -61,64 +181,10 @@
 //! ```
 //! See [src/time/time.pest](https://github.com/henry-merrilees/prac/blob/main/src/time/time.pest) for the complete grammar.
 //! Errors are decent enough to help you if you get stuck.
-//!
-//! # Motivation, problems, and a possible solution
-//!
-//! ## Motivation
-//! Developing skill takes time + structure. `prac` attempts to promote both while being as lightweight as possible.
-//!
-//!
-//! ## Solving the right problems
-//! To remain lightweight, prac sticks only to problems that (to me) most obviously need solving.
-//!
-//! Primarily,
-//! - "What should I do now?" in instances where pre-planning is inadviseable or impossible,
-//! - losing track of practices I haven't done in a while, and
-//! - progress/time tracking without excessive overhead or breaking flow.
-//!
-//! ## What's so special about prac?
-//! Not much, and that's on purpose, but in service of the above, prac has a few distinguishing
-//! design decisions:
-//! - Rather than "events" being triggered by the clock/calendar, which are not privileged to
-//! user's psychological state, the prac lifecycle starts when the user gets stuck in their current task
-//!    or otherwise decides it's time to do something new. This avoids flow-breaking interruptions
-//!    while promoting mindfulness as an active part of the user's feedback loop.
-//! - Rather than on a scheduled (absolute) interval, items run on (relative) time elapsed since prior log. E.g. a
-//! daily task period begins when you log it, and ends within 24 hours (plus a grace period as
-//! specified in `prac config` to prevent forward creep).
-//!  There is no scheduling to displace user agency, elapsed time since last log is displayed
-//! as a fraction of the period set for each practice. This information can be incorporated into the final decision entirely at the user's discretion.
-//! - Tracking is dead-simple, intentionally adding no functionality that is not possible with pen
-//! and paper. Time is tracked is a sum total of self-reported increments. Logging is done in plain-text.
-//!
-//! ### Usage advice
-//! How you wish to use prac in a larger context is up to you. For practices that demand more
-//! prolonged focus, rather than trying to cram them in wherever, consider blocking off
-//! a regular 2-4 hour period in which you get settled, turn off all distractions and hook
-//! in.
-//!
-//! For shorter practices, in honor of Richard Hamming's three-minute-problems hour, though you
-//! are not a "machine," you may similarly restrict yourself to only those practices instead no longer than maybe 10 or 15 minutes.
-//! When those minutes are up, you move on--"no matter how much you had claimed you were practically finished" (_Art of Doing Science and Engineering_, pg. 369).
-//!
-//! This time boxing can be useful to promote regularity on longer scales too. Personally,
-//! I do four blocks, each of one hour with 15 minute breaks between, one practice per
-//! block. In each block I can stop early but can't go back--somewhere between a standardized
-//! test and a "reverse pomodoro."
-//!
-//! Consider putting prac where you will see it. I have `prac list` in my shell prompt.
-//!
-//! ### More benefits of elapsed-time periods
-//! - Scheduled/calendar intervals are intolerant to period drift either way. If you finish too
-//! late (i.e. need a longer feedback cycle), you find yourself having to work more quickly to
-//! catch up on the accumulated iterations. If you finish too early (i.e. need shorter feedback
-//! cycle), you have to wait even longer until the next scheduled event.
-//! - With elapsed-time periods, an overrun is no big deal, nothing stacks up, just log it when you
-//! get to it and you'll start again with a full period.
-//! - You also are not "penalized" for overachieving / finishing early... just make sure you are working at a
-//! pace sustainable to finish within the next period which you have just moved forward.
-//! - If you find yourself regularly finishing very early/late, no big deal! Just take it as a sign
-//! that you need to adjust the period of your feedback cycle!
+
+// TODO: --no-clock for sessions, and make max_time optional. Display bar, and optional ENTER
+// handler to terminate.
+
 #![warn(
     clippy::all,
     clippy::pedantic,
@@ -138,8 +204,10 @@ use anyhow::{bail, Context, Result};
 use application::{handle_transition, State, StateTransition};
 use clap::Parser;
 use cli::{Cli, SubCommand};
-use std::io::BufWriter;
+use std::io::{BufWriter, Write};
 use std::path::Path;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
 
 fn get_time_span_interactive(msg: &str) -> Result<chrono::Duration> {
     let time_input = dialoguer::Input::<String>::new()
@@ -175,10 +243,7 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
             } else {
                 name.context("no practice name provided")?
             };
-            let msg = format!(
-                "How often (not how long) would you like to practice \"{}?\"",
-                name
-            );
+            let msg = format!("How often (not how long) would you like to practice \"{name}?\"");
             let period = if interactive {
                 get_time_span_interactive(&msg)?
             } else {
@@ -202,6 +267,54 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
             } else {
                 time.context("no time provided")?
             };
+            StateTransition::Log { name, time }
+        }
+        SubCommand::Session {
+            name,
+            max_time,
+            interactive,
+        } => {
+            let name = if interactive {
+                state.find_name()?.to_owned()
+            } else {
+                name.context("no practice name provided")?
+            };
+
+            let max_time = if interactive {
+                let msg = format!("How long (not how often) would you like to practice \"{name}?\"");
+                get_time_span_interactive(&msg)?
+            } else {
+                max_time.context("no time provided")?
+            };
+
+            // Print out how much time has passed untile ctrl-c is pressed.
+
+
+            let running = Arc::new(AtomicBool::new(true));
+            let r = running.clone();
+
+
+            ctrlc::set_handler(move || {
+                r.store(false, std::sync::atomic::Ordering::SeqCst);
+                    println!("ctrl-c pressed");
+            })?;
+
+            let mut time = chrono::Duration::seconds(0);
+            let start = chrono::Utc::now();
+            while running.load(std::sync::atomic::Ordering::SeqCst) && time < max_time {
+                // TODO use bar, you already have it
+                print!("\r{} elapsed of {}", time::FlatTime::from(time).format_seconds(), time::FlatTime::from(max_time).format_seconds());
+                std::io::stdout().flush()?;
+                std::thread::sleep(std::time::Duration::from_millis(1000));
+                time = chrono::Utc::now() - start;
+            }
+
+
+            let time = (chrono::Utc::now() - start).min(max_time);
+
+            print!("\r{} elapsed", time::FlatTime::from(time).format_seconds());
+            std::io::stdout().flush()?;
+
             StateTransition::Log { name, time }
         }
         SubCommand::Notes {

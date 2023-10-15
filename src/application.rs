@@ -1,3 +1,6 @@
+
+use std::io::Write;
+
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -126,7 +129,7 @@ impl State {
         let start_messages = self
             .practices
             .keys()
-            .map(|name| format!("  {} ", name))
+            .map(|name| format!("  {name} "))
             .collect::<Vec<_>>();
 
         let end_messages = &self
@@ -208,7 +211,7 @@ impl State {
             println!("{start:>max_start_len$}{sum_bar}{end:<max_end_len$}");
         }
 
-        return Ok(());
+        Ok(())
     }
 
     /// Find the name of a practice either validating an name input, or if not provided, prompting the user to select one.
@@ -283,6 +286,8 @@ pub enum StateTransition {
     Log {
         name: String,
         #[serde_as(as = "serde_with::DurationSeconds<i64>")]
+        /// Maximum amount of time intended to spend. Both useful as a time-boxing strategy and as
+        /// a backstop to neglected termination.
         time: Duration,
     },
     Notes {

@@ -129,6 +129,27 @@ impl FlatTime {
         }
         result
     }
+
+    /// Format the time in units with precision to a second.
+    pub fn format_seconds(&self) -> String {
+        let mut result = String::new();
+        let mut first = true;
+        for (value, unit) in self.into_iter().take(7) {
+            if value == 0 {
+                continue;
+            }
+            if !first {
+                result.push(' ');
+            }
+            first = false;
+            result.push_str(&format!("{value}{unit}"));
+        }
+        if result.is_empty() {
+            result.push_str("0s");
+        }
+        result
+    }
+
 }
 
 #[allow(non_snake_case, clippy::many_single_char_names)]
