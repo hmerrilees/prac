@@ -77,7 +77,7 @@
 //! ♥  prac session steno 2h
 //! ```
 //! Prac will then keep an eye on how long it's been. Optionally, using a terminal with job-completion
-//! notifications to ping you after the desired participation duration has elapsed.
+//! notifications will ping you after the desired participation duration has elapsed.
 //!
 //!
 //!
