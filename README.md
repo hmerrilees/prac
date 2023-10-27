@@ -1,4 +1,11 @@
 # prac
+## Install
+First, get cargo, then install prac.
+```
+curl https://sh.rustup.rs -sSf | sh
+cargo install prac
+```
+
 
 ## The feedback-oriented utility for a practice-oriented life.
 
