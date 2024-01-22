@@ -10,7 +10,7 @@ cargo install prac
 ## The feedback-oriented utility for a practice-oriented life.
 
 ## TL:DR;
-Awww, the minifesto is not *that* insufferable, I assure you! But if you're feeling lazy,
+Awww, the minifesto is not *that* insufferable, I assure you! But if you're feeling lazy, either skip to the tutorial section or
 just run `prac help`, and `prac help <subcommand>`. The help is fairly complete. Applicable
 subcommands have `-i` flag for interactive mode, highly recommended.
 
@@ -23,31 +23,32 @@ recommend reading on.
 
 ## Minifesto
 #### problem
-You have high-level values which should materialize in certain regular practices that
+You have high-level values which theoretically should materialize in certain regular practices that
 reflect your life-intentions. Modern life is busy, and given that we have well-armed trivial things
 with calendars, todo lists, pomodoro timers, etc. to conquer our natural motivations,
 it is no surprise that such things regularly displace our practices, and in doing so, our values.
 
-We need a system to set our life-practices on equal footing with our extrinsically-motivated
-activity, even if only to give us in the business of life a conventent excuse to abide by our values.
-We need a tool to save us from our tools.
+We need a system to set our life-practices on equal footing with our extrinsically motivated
+activity, even if only to give us a conventent excuse to abide by our values amidst the busyness of life.
+
+In the case of the tool-prone (e.g. myself) we need a tool to save us from our tools.
 
 #### existing (un)solutions
-Existing productivity tools are actively hostile to the uninterruptabile nature of valuable practice.
+Existing productivity tools (akin to preemptive scheduling) are actively hostile to the uninterruptabile nature of valuable practice.
 We have come to accept a certain shallowness in our work. We tolerate the disruptive
-mechanisms of our productivity tools as it is not clear exactly what of value they are
+mechanisms of our productivity tools when it is not clear exactly what of value they are
 disrupting. Our life-practices are not advantaged by unimportance in this way.
 
 Additionally, humans have not always required these tools. There existed ritual kindness long before the calendar.
 When supplementing our practices with technology, we should ensure that every aspect is
-genuinely additive. Knowing what focus has been lost to notifications, our system should only
+genuinely additive. For instance, knowing what focus has been lost to notifications, our system should only
 look to the clock when it is clear that it has something of value to say. We know far
 better ourselves when it is time to move on.
 
-#### method
+#### method (tutorial)
 
-Before doing anything else, first you need to add practices, with what else but `prac add'. I would
-recommend doing this interactively with `prac add -i'
+Before doing anything else, first you need to add practices, with what else but `prac add`. I would
+recommend doing this interactively with `prac add -i`
 
 ```rust
  ♥  prac add -i
