@@ -10,7 +10,7 @@ cargo install prac
 ## The feedback-oriented utility for a practice-oriented life.
 
 ## TL:DR;
-Awww, the minifesto is not *that* insufferable, I assure you! But if you're really that lazy,
+Awww, the minifesto is not *that* insufferable, I assure you! But if you're feeling lazy,
 just run `prac help`, and `prac help <subcommand>`. The help is fairly complete. Applicable
 subcommands have `-i` flag for interactive mode, highly recommended.
 
