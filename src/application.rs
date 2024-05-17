@@ -165,10 +165,15 @@ impl State {
             .map(|s| format!("{s:<max_end_len$}"))
             .collect::<Vec<_>>();
 
-        let term_width = termsize::get().context("failed to obtain termsize")?.cols;
+        let term_width = termion::terminal_size()
+            .context("failed to obtain termsize")?
+            .0;
+        let padding_width = max_start_len + max_end_len;
         let bar_width = (term_width as usize)
-            .checked_sub(max_start_len + max_end_len)
-            .context("terminal too narrow")?;
+            .checked_sub(padding_width)
+            .with_context(|| {
+                format!("term width {term_width} too small, must be at least {padding_width}")
+            })?;
 
         println!();
         for (practice, start, end) in itertools::izip!(

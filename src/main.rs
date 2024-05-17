@@ -205,7 +205,7 @@ use application::{handle_transition, State, StateTransition};
 use clap::Parser;
 use cli::{Cli, SubCommand};
 use std::io::{BufWriter, Write};
-use std::path::Path;
+use std::path::{self, Path, PathBuf};
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
@@ -447,6 +447,14 @@ fn main() -> Result<()> {
     };
 
     process_subcommand(&mut state, cli.command, &path)?;
+
+    if !path.parent().is_some_and(Path::exists) {
+        // create all subdirs
+        let parent = path.parent().context("state path has no parent")?;
+        if !parent.exists() {
+            std::fs::create_dir_all(parent).context("failed to create parent directories")?;
+        }
+    }
 
     let state_file = std::fs::File::create(path).context("failed to create state file")?;
     state.update_version();
