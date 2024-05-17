@@ -205,7 +205,7 @@ use application::{handle_transition, State, StateTransition};
 use clap::Parser;
 use cli::{Cli, SubCommand};
 use std::io::{BufWriter, Write};
-use std::path::{self, Path, PathBuf};
+use std::path::Path;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
@@ -339,7 +339,7 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
         }
         SubCommand::Reset => StateTransition::Reset,
         SubCommand::StateLocation => {
-            println!("State path: {}", state_path.display());
+            println!("{}", state_path.display());
             return Ok(());
         }
         SubCommand::EditPeriod {
@@ -430,7 +430,11 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     let path = if let Some(path) = cli.path {
-        path
+        if !path.is_absolute() {
+            bail!("Path {} is not absolute", path.display())
+        } else {
+            path
+        }
     } else {
         State::get_path()?
     };

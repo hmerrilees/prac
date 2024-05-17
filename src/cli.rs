@@ -9,7 +9,7 @@ use clap::{Parser, Subcommand};
 #[command(version = env!("CARGO_PKG_VERSION"))]
 #[command(about = env!("CARGO_PKG_DESCRIPTION"))]
 pub struct Cli {
-    /// Path to state file. If not provided, will search for state file in common locations.
+    /// Absolute path to state file. If not provided, will search for state file in common locations.
     ///
     /// This is useful if you want to track multiple practice sets. I.e. lets say you want to keep
     /// up with your friends.

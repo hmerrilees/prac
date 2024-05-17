@@ -1,12 +1,10 @@
-use std::io::Write;
-
 use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
 
 use serde_with::serde_as;
 use std::collections::btree_map;
 use std::fmt::{Display, Formatter};
-use std::{collections::BTreeMap, env::var, path::PathBuf};
+use std::{collections::BTreeMap, path::PathBuf};
 
 use anyhow::{bail, ensure, Context, Result};
 
