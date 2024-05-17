@@ -1,4 +1,3 @@
-
 use std::io::Write;
 
 use chrono::{DateTime, Duration, Utc};
@@ -9,7 +8,7 @@ use std::collections::btree_map;
 use std::fmt::{Display, Formatter};
 use std::{collections::BTreeMap, env::var, path::PathBuf};
 
-use anyhow::{bail, Context, Result, ensure};
+use anyhow::{bail, ensure, Context, Result};
 
 use dialoguer::FuzzySelect;
 
@@ -244,19 +243,11 @@ impl State {
         &self.config.user_config
     }
 
-    /// Get the path to the state file, either from the environment, or from the default location.
-    /// Search order: ``$PRAC_PATH``, ``$PRAC_HOME/prac.json``, [`dirs::data_dir`]/prac/prac.json, [`dirs::home_dir`]/.prac.json
+    /// Get the path to the default location state file.
+    /// Search order: [`dirs::data_dir`]/prac/prac.json, [`dirs::home_dir`]/.prac.json
+    /// This may be overridden elsewhere, in either the `PRAC_PATH` env var, or with the --file arg.
     pub fn get_path() -> Result<PathBuf> {
-        if let Ok(practice_path) = var("PRAC_PATH") {
-            let path = PathBuf::from(practice_path);
-            Ok(path)
-        } else if let Ok(practice_home) = var("PRAC_HOME") {
-            let practice_home = PathBuf::from(practice_home);
-            std::fs::create_dir_all(&practice_home)
-                .context("$PRAC_HOME specified but could not be created.")?;
-            let path = practice_home.join("prac.json");
-            Ok(path)
-        } else if let Some(data_home) = dirs::data_dir() {
+        if let Some(data_home) = dirs::data_dir() {
             let default_dir = data_home.join("prac");
             std::fs::create_dir_all(&default_dir)
                 .with_context(|| format!("could not create {}", default_dir.display()))?;
@@ -356,10 +347,19 @@ pub fn handle_transition(state: &mut State, transition: StateTransition) -> Resu
             current_name,
             new_name,
         } => {
-            ensure!(state.practices.contains_key(&new_name), "Practice with name \"{new_name}\" already exists.");
-            ensure!(!state.practices.contains_key(&new_name), "Practice with name \"{new_name}\" already exists.");
+            ensure!(
+                state.practices.contains_key(&new_name),
+                "Practice with name \"{new_name}\" already exists."
+            );
+            ensure!(
+                !state.practices.contains_key(&new_name),
+                "Practice with name \"{new_name}\" already exists."
+            );
 
-            let practice = state.practices.remove(&current_name).expect("we already checked for key membership");
+            let practice = state
+                .practices
+                .remove(&current_name)
+                .expect("we already checked for key membership");
             state.practices.insert(new_name, practice);
             Ok(())
         }

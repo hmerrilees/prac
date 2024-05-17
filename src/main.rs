@@ -5,17 +5,17 @@
 //! just run `prac help`, and `prac help <subcommand>`. The help is fairly complete. Applicable
 //! subcommands have `-i` flag for interactive mode, highly recommended.
 //!
-//! I'd start with `prac add -i` (interactive), then `prac session -i` to start a practice session, then `prac list` to pick what to do next. 
-//! Just remember, you are specifying a time period, not duration--this is the difference between running 
+//! I'd start with `prac add -i` (interactive), then `prac session -i` to start a practice session, then `prac list` to pick what to do next.
+//! Just remember, you are specifying a time period, not duration--this is the difference between running
 //! a 30-minute 5k once a month and running a 5k every 30 minutes. I know which I'd prefer.
 //!
 //! Most of the utility of this tool is not in the functionality but in the approach, so I would
 //! recommend reading on.
 //!
 //! # Minifesto
-//! ### problem 
+//! ### problem
 //! You have high-level values which should materialize in certain regular practices that
-//! reflect your life-intentions. Modern life is busy, and given that we have well-armed trivial things 
+//! reflect your life-intentions. Modern life is busy, and given that we have well-armed trivial things
 //! with calendars, todo lists, pomodoro timers, etc. to conquer our natural motivations,
 //! it is no surprise that such things regularly displace our practices, and in doing so, our values.
 //!
@@ -88,7 +88,7 @@
 //! distributed systems programming ▬▬▬▬
 //!                       daily log ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 //!                        exercise ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-//!                     kierkegaard 
+//!                     kierkegaard
 //!                           steno ▬▬▬▬▬▬▬▬
 //! ```
 //!
@@ -108,7 +108,7 @@
 //! priorities to best suit your values.
 //!
 //! If you find the bar of a task regularly running to the end of the window or that it never makes it
-//! close, you can adjust the period with `prac edit-period -i` (interactive). 
+//! close, you can adjust the period with `prac edit-period -i` (interactive).
 //!
 //! The `-d` flag on `prac list -d` adds a "danger bar" which is a weighted sum display of all
 //! practice periods. You should consider set your periods to where it is achievable to keep the
@@ -126,9 +126,9 @@
 //! forcing our life to conform to the gaps, we are more concerned with *doing* what it is we set
 //! out to do (with minimally-invasive guardrails), and merely observing what timing falls into place.
 //!
-//! With absolute calendar periods, the next participation doesn't become any easier because the 
+//! With absolute calendar periods, the next participation doesn't become any easier because the
 //! last was done later, despite that we will have less time to do it. For that which we are particularly
-//! excited, we shouldn't have to wait for the next window either. If we missed last period, should we make it up? 
+//! excited, we shouldn't have to wait for the next window either. If we missed last period, should we make it up?
 //! All these considerations make it very easy to break with and give up on a system based on
 //! absolute calendar periods.
 //!
@@ -139,7 +139,7 @@
 //! If you get way behind on everything, no need to give up, just `prac reset` to start again with
 //! a clean slate. Prac is intentionally designed to avoid any derailing events.
 //!
-//! Nominally an alternative to routine-scheduling systems, *prac is secretly a routine-discovery system.* 
+//! Nominally an alternative to routine-scheduling systems, *prac is secretly a routine-discovery system.*
 //! Daily practices will near the end of their period at a similar time as they were completed the
 //! previous day, motivating users naturally to fall into a rhythm. The same applies on any other
 //! calendar-aligned period. Additionally, prac has a configurable grace period to enable emergent routines
@@ -151,8 +151,8 @@
 //! but the overhead seems to be manageable (if not enjoyable) for some. However, with the "aid" of software,
 //! you can subject yourself daily to an procedurally-generated list of tasks with complexity far in
 //! excess of that which you could ever manage to produce in your head, or even with pen and paper.
-//! To fit them all in, your only option is micro-scheduling the day, which both requires interrupts and 
-//! is completely insensitive to what activity one feels in the moment most suited to practice intently. 
+//! To fit them all in, your only option is micro-scheduling the day, which both requires interrupts and
+//! is completely insensitive to what activity one feels in the moment most suited to practice intently.
 //! An impossible schedule is virtually inevitable. Enabling this would defeat the entire purpose of prac.
 //!
 //! ## Period syntax
@@ -206,8 +206,8 @@ use clap::Parser;
 use cli::{Cli, SubCommand};
 use std::io::{BufWriter, Write};
 use std::path::Path;
-use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
+use std::sync::Arc;
 
 fn get_time_span_interactive(msg: &str) -> Result<chrono::Duration> {
     let time_input = dialoguer::Input::<String>::new()
@@ -281,7 +281,8 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
             };
 
             let max_time = if interactive {
-                let msg = format!("How long (not how often) would you like to practice \"{name}?\"");
+                let msg =
+                    format!("How long (not how often) would you like to practice \"{name}?\"");
                 get_time_span_interactive(&msg)?
             } else {
                 max_time.context("no time provided")?
@@ -289,26 +290,27 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
 
             // Print out how much time has passed untile ctrl-c is pressed.
 
-
             let running = Arc::new(AtomicBool::new(true));
             let r = running.clone();
 
-
             ctrlc::set_handler(move || {
                 r.store(false, std::sync::atomic::Ordering::SeqCst);
-                    println!("ctrl-c pressed");
+                println!("ctrl-c pressed");
             })?;
 
             let mut time = chrono::Duration::seconds(0);
             let start = chrono::Utc::now();
             while running.load(std::sync::atomic::Ordering::SeqCst) && time < max_time {
                 // TODO use bar, you already have it
-                print!("\r{} elapsed of {}", time::FlatTime::from(time).format_seconds(), time::FlatTime::from(max_time).format_seconds());
+                print!(
+                    "\r{} elapsed of {}",
+                    time::FlatTime::from(time).format_seconds(),
+                    time::FlatTime::from(max_time).format_seconds()
+                );
                 std::io::stdout().flush()?;
                 std::thread::sleep(std::time::Duration::from_millis(1000));
                 time = chrono::Utc::now() - start;
             }
-
 
             let time = (chrono::Utc::now() - start).min(max_time);
 
@@ -390,7 +392,10 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
                 current_name.context("no current practice name provided")?
             };
             let new_name = if interactive {
-                state.find_name()?.to_owned()
+                dialoguer::Input::<String>::new()
+                    .with_prompt("New practice name")
+                    .allow_empty(false)
+                    .interact()? // returning already exists
             } else {
                 new_name.context("no new practice name provided")?
             };
@@ -422,24 +427,28 @@ fn process_subcommand(state: &mut State, subcommand: SubCommand, state_path: &Pa
 }
 
 fn main() -> Result<()> {
-    let state_path = State::get_path()?;
+    let cli = Cli::parse();
 
-    let mut state = if state_path.exists() {
+    let path = if let Some(path) = cli.path {
+        path
+    } else {
+        State::get_path()?
+    };
+
+    let mut state = if path.exists() {
         serde_json::from_str(
-            &std::fs::read_to_string(&state_path).context("could not read statefile")?,
+            &std::fs::read_to_string(&path).context("could not read statefile")?,
         )
         .with_context(|| format!("failed to parse state at \"{}\".\n\
         Until automated state upgrading is implemented, you will either have to satisfy the parser's demands, or start with a new statefile. \
-        Be sure to save though.", state_path.display()))?
+        Be sure to save though.", path.display()))?
     } else {
         State::new()
     };
 
-    let cli = Cli::parse();
+    process_subcommand(&mut state, cli.command, &path)?;
 
-    process_subcommand(&mut state, cli.command, &state_path)?;
-
-    let state_file = std::fs::File::create(state_path).context("failed to create state file")?;
+    let state_file = std::fs::File::create(path).context("failed to create state file")?;
     state.update_version();
     serde_json::to_writer_pretty(BufWriter::new(state_file), &state)
         .context("failed to write state to file")?;

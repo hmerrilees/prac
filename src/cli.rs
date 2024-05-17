@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use super::time::parse_time_span;
 use chrono::Duration;
 use clap::{Parser, Subcommand};
@@ -7,6 +9,13 @@ use clap::{Parser, Subcommand};
 #[command(version = env!("CARGO_PKG_VERSION"))]
 #[command(about = env!("CARGO_PKG_DESCRIPTION"))]
 pub struct Cli {
+    /// Path to state file. If not provided, will search for state file in common locations.
+    ///
+    /// This is useful if you want to track multiple practice sets. I.e. lets say you want to keep
+    /// up with your friends.
+    /// alias friends='prac --path=/path/to/friends_state'
+    #[arg(long, env = "PRAC_PATH")]
+    pub(super) path: Option<PathBuf>,
     #[command(subcommand)]
     pub(super) command: SubCommand,
 }
@@ -82,7 +91,7 @@ pub enum SubCommand {
     Reset,
     /// Show state file location. `help state-location` for more info.
     ///
-    /// State is stored in $PRACTICE_PATH, $PRACTICE_HOME/prac.json, [dirs::data_dir]/prac/prac.json
+    /// State is stored in $PRAC_PATH, [dirs::data_dir]/prac/prac.json
     /// or [dirs::home_dir]/.prac.json, searched in that order.
     ///
     /// It's a good idea to vcs your state file.
